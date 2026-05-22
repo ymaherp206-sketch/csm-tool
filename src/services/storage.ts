@@ -1,6 +1,7 @@
 import type {
   Client, MonthlyFinancials, ClosedJob, HappinessEntry,
-  ActivityLog, NextAction, AgencySettings, ChecklistItem, AgencyMonthData
+  ActivityLog, NextAction, AgencySettings, AgencyBenchmarks,
+  ChecklistItem, AgencyMonthData
 } from '../types';
 
 const KEYS = {
@@ -150,16 +151,29 @@ export function saveNextAction(action: NextAction): void {
 }
 
 // ── Settings ──────────────────────────────────────────────────────────────────
+export const DEFAULT_BENCHMARKS: AgencyBenchmarks = {
+  cac:              { good: 500,  avg: 1500, higherIsBetter: false },
+  margin:           { good: 30,   avg: 15,   higherIsBetter: true  },
+  cpl:              { good: 25,   avg: 75,   higherIsBetter: false },
+  costPerBookedAppt:{ good: 75,   avg: 200,  higherIsBetter: false },
+  costPerShownAppt: { good: 120,  avg: 300,  higherIsBetter: false },
+  leadToBookedRate: { good: 15,   avg: 7,    higherIsBetter: true  },
+  showRate:         { good: 75,   avg: 50,   higherIsBetter: true  },
+};
+
 const DEFAULT_SETTINGS: AgencySettings = {
   agencyName: 'My Agency',
   logoUrl: '',
   defaultPricePerAppointment: 100,
   defaultProfitThreshold: 500,
   csmNames: ['CSM 1'],
+  benchmarks: DEFAULT_BENCHMARKS,
 };
 
 export function getSettings(): AgencySettings {
-  return get<AgencySettings>(KEYS.settings, DEFAULT_SETTINGS);
+  const stored = get<AgencySettings>(KEYS.settings, DEFAULT_SETTINGS);
+  // Merge in any missing benchmark keys from defaults (forward-compat)
+  return { ...DEFAULT_SETTINGS, ...stored, benchmarks: { ...DEFAULT_BENCHMARKS, ...stored.benchmarks } };
 }
 
 export function saveSettings(settings: AgencySettings): void {
@@ -168,8 +182,10 @@ export function saveSettings(settings: AgencySettings): void {
 
 // ── Agency Month Data ─────────────────────────────────────────────────────────
 const AGENCY_MONTH_DEFAULTS: Omit<AgencyMonthData, 'month'> = {
-  b2bAdSpend: 0, b2bNewClients: 0, b2bPricePerAppt: 0, b2bAvgShownAppts: 0,
-  smsSpend: 0, smsNewClients: 0, smsPricePerAppt: 0, smsAvgShownAppts: 0,
+  adsSpend: 0, adsNewClients: 0, adsAvgShownAppts: 0, adsPricePerAppt: 0,
+  adsTotalLeads: 0, adsTotalBookedAppts: 0,
+  smsSpend: 0, smsNewClients: 0, smsAvgShownAppts: 0, smsPricePerAppt: 0,
+  smsTotalLeads: 0, smsTotalBookedAppts: 0,
   smsCostPerReply: 0, smsCostPerBookedCall: 0,
   retainerRevenue: 0, operatingCosts: 0,
 };
@@ -179,7 +195,9 @@ export function getAgencyMonths(): AgencyMonthData[] {
 }
 
 export function getAgencyMonthData(month: string): AgencyMonthData {
-  return getAgencyMonths().find(m => m.month === month) ?? { month, ...AGENCY_MONTH_DEFAULTS };
+  const stored = getAgencyMonths().find(m => m.month === month);
+  // Merge defaults so new fields are always present even if older data is loaded
+  return { ...AGENCY_MONTH_DEFAULTS, ...stored, month };
 }
 
 export function saveAgencyMonthData(data: AgencyMonthData): void {

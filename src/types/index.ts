@@ -12,8 +12,8 @@ export interface Client {
   id: string;
   name: string;
   businessType: string;
-  startDate: string; // ISO date
-  contractEndDate: string; // ISO date
+  startDate: string;
+  contractEndDate: string;
   status: ClientStatus;
   assignedCSM: string;
   commChannel: CommChannel;
@@ -27,23 +27,16 @@ export interface Client {
 
 export interface MonthlyFinancials {
   clientId: string;
-  month: string; // YYYY-MM
+  month: string;
   appointmentsBooked: number;
   appointmentsShown: number;
   adSpend: number;
-  // Calculated:
-  // revenue = shown * pricePerAppointment
-  // showRate = shown / booked * 100
-  // grossProfit = revenue - adSpend
-  // margin = grossProfit / revenue * 100
-  // ROAS = revenue / adSpend
-  // breakEven = adSpend / pricePerAppointment
 }
 
 export interface ClosedJob {
   id: string;
   clientId: string;
-  date: string; // ISO date
+  date: string;
   value: number;
   jobType: string;
   description: string;
@@ -53,9 +46,9 @@ export interface ClosedJob {
 export interface HappinessEntry {
   id: string;
   clientId: string;
-  score: number; // 1-5
+  score: number;
   note: string;
-  date: string; // ISO date
+  date: string;
   createdAt: string;
 }
 
@@ -63,7 +56,7 @@ export interface ActivityLog {
   id: string;
   clientId: string;
   type: ActivityType;
-  date: string; // ISO date
+  date: string;
   note: string;
   createdAt: string;
 }
@@ -71,16 +64,34 @@ export interface ActivityLog {
 export interface NextAction {
   clientId: string;
   description: string;
-  dueDate: string; // ISO date
+  dueDate: string;
   updatedAt: string;
+}
+
+// One threshold entry: lower-is-better or higher-is-better
+export interface BenchmarkConfig {
+  good: number;
+  avg: number;
+  higherIsBetter: boolean;
+}
+
+export interface AgencyBenchmarks {
+  cac: BenchmarkConfig;
+  margin: BenchmarkConfig;
+  cpl: BenchmarkConfig;
+  costPerBookedAppt: BenchmarkConfig;
+  costPerShownAppt: BenchmarkConfig;
+  leadToBookedRate: BenchmarkConfig;
+  showRate: BenchmarkConfig;
 }
 
 export interface AgencySettings {
   agencyName: string;
-  logoUrl: string; // base64 or URL
+  logoUrl: string;
   defaultPricePerAppointment: number;
   defaultProfitThreshold: number;
   csmNames: string[];
+  benchmarks: AgencyBenchmarks;
 }
 
 export interface ChurnRiskBreakdown {
@@ -93,25 +104,28 @@ export interface ChurnRiskBreakdown {
 }
 
 export interface AgencyMonthData {
-  month: string; // YYYY-MM
-  // B2B Ads
-  b2bAdSpend: number;
-  b2bNewClients: number;
-  b2bPricePerAppt: number;
-  b2bAvgShownAppts: number;
-  // SMS
+  month: string;
+  // Ads Acquisition
+  adsSpend: number;
+  adsNewClients: number;
+  adsAvgShownAppts: number;
+  adsPricePerAppt: number;
+  adsTotalLeads: number;
+  adsTotalBookedAppts: number;
+  // SMS Acquisition
   smsSpend: number;
   smsNewClients: number;
-  smsPricePerAppt: number;
   smsAvgShownAppts: number;
+  smsPricePerAppt: number;
+  smsTotalLeads: number;
+  smsTotalBookedAppts: number;
   smsCostPerReply: number;
   smsCostPerBookedCall: number;
-  // Other
+  // P&L
   retainerRevenue: number;
   operatingCosts: number;
 }
 
-// Computed / derived types
 export interface ClientWithMetrics extends Client {
   currentMonthFinancials: MonthlyFinancials | null;
   currentRevenue: number;
