@@ -92,6 +92,25 @@ export interface ChurnRiskBreakdown {
   level: 'Low' | 'Medium' | 'High';
 }
 
+export interface AgencyMonthData {
+  month: string; // YYYY-MM
+  // B2B Ads
+  b2bAdSpend: number;
+  b2bNewClients: number;
+  b2bPricePerAppt: number;
+  b2bAvgShownAppts: number;
+  // SMS
+  smsSpend: number;
+  smsNewClients: number;
+  smsPricePerAppt: number;
+  smsAvgShownAppts: number;
+  smsCostPerReply: number;
+  smsCostPerBookedCall: number;
+  // Other
+  retainerRevenue: number;
+  operatingCosts: number;
+}
+
 // Computed / derived types
 export interface ClientWithMetrics extends Client {
   currentMonthFinancials: MonthlyFinancials | null;

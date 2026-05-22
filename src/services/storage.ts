@@ -1,6 +1,6 @@
 import type {
   Client, MonthlyFinancials, ClosedJob, HappinessEntry,
-  ActivityLog, NextAction, AgencySettings, ChecklistItem
+  ActivityLog, NextAction, AgencySettings, ChecklistItem, AgencyMonthData
 } from '../types';
 
 const KEYS = {
@@ -11,6 +11,7 @@ const KEYS = {
   activity: 'csm_activity',
   nextActions: 'csm_next_actions',
   settings: 'csm_settings',
+  agencyMonths: 'csm_agency_months',
 };
 
 function get<T>(key: string, fallback: T): T {
@@ -163,6 +164,30 @@ export function getSettings(): AgencySettings {
 
 export function saveSettings(settings: AgencySettings): void {
   set(KEYS.settings, settings);
+}
+
+// ── Agency Month Data ─────────────────────────────────────────────────────────
+const AGENCY_MONTH_DEFAULTS: Omit<AgencyMonthData, 'month'> = {
+  b2bAdSpend: 0, b2bNewClients: 0, b2bPricePerAppt: 0, b2bAvgShownAppts: 0,
+  smsSpend: 0, smsNewClients: 0, smsPricePerAppt: 0, smsAvgShownAppts: 0,
+  smsCostPerReply: 0, smsCostPerBookedCall: 0,
+  retainerRevenue: 0, operatingCosts: 0,
+};
+
+export function getAgencyMonths(): AgencyMonthData[] {
+  return get<AgencyMonthData[]>(KEYS.agencyMonths, []);
+}
+
+export function getAgencyMonthData(month: string): AgencyMonthData {
+  return getAgencyMonths().find(m => m.month === month) ?? { month, ...AGENCY_MONTH_DEFAULTS };
+}
+
+export function saveAgencyMonthData(data: AgencyMonthData): void {
+  const all = getAgencyMonths();
+  const idx = all.findIndex(m => m.month === data.month);
+  if (idx >= 0) all[idx] = data;
+  else all.push(data);
+  set(KEYS.agencyMonths, all);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

@@ -1,12 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, Activity, Settings, ChevronLeft, ChevronRight, Building2
+  LayoutDashboard, Users, Activity, Settings, ChevronLeft, ChevronRight, Building2, BarChart3
 } from 'lucide-react';
 import { useState } from 'react';
 import { getSettings } from '../../services/storage';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/agency', icon: BarChart3, label: 'Agency' },
   { to: '/clients', icon: Users, label: 'Clients' },
   { to: '/activity', icon: Activity, label: 'Activity' },
   { to: '/settings', icon: Settings, label: 'Settings' },
