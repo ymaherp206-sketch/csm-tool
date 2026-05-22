@@ -73,4 +73,7 @@ body {
   .badge-gray {
     @apply bg-slate-800/50 text-slate-400 border border-slate-700/40 text-xs font-medium px-2 py-0.5 rounded-full;
   }
+  .badge-purple {
+    @apply bg-purple-900/30 text-purple-400 border border-purple-900/40 text-xs font-medium px-2 py-0.5 rounded-full;
+  }
 }

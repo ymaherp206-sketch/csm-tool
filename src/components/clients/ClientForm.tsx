@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Client, ClientStatus, CommChannel, ChecklistItem } from '../../types';
+import type { Client, ClientStatus, CommChannel, ChecklistItem, BillingModel } from '../../types';
 import {
   generateId, getSettings, defaultChecklist, saveClient
 } from '../../services/storage';
@@ -28,7 +28,9 @@ export default function ClientForm({ client, onSaved, onCancel }: Props) {
     assignedCSM: client?.assignedCSM ?? (settings.csmNames[0] ?? ''),
     commChannel: (client?.commChannel ?? 'Email') as CommChannel,
     notes: client?.notes ?? '',
+    billingModel: (client?.billingModel ?? settings.defaultBillingModel ?? 'PPSA') as BillingModel,
     pricePerAppointment: client?.pricePerAppointment ?? settings.defaultPricePerAppointment,
+    retainerFee: client?.retainerFee ?? 0,
     minProfitThreshold: client?.minProfitThreshold ?? settings.defaultProfitThreshold,
   });
 
@@ -61,6 +63,9 @@ export default function ClientForm({ client, onSaved, onCancel }: Props) {
     const saved: Client = {
       id: client?.id ?? generateId(),
       ...form,
+      // Ensure unused fields for each model default to 0
+      pricePerAppointment: form.billingModel === 'PPSA' ? form.pricePerAppointment : 0,
+      retainerFee: form.billingModel === 'Retainer' ? form.retainerFee : 0,
       checklist,
       createdAt: client?.createdAt ?? now,
       updatedAt: now,
@@ -93,6 +98,32 @@ export default function ClientForm({ client, onSaved, onCancel }: Props) {
         </div>
       </div>
 
+      {/* Billing model — shown prominently first */}
+      <div>
+        <label className="label">Billing Model</label>
+        <div className="grid grid-cols-2 gap-3">
+          {(['PPSA', 'Retainer'] as BillingModel[]).map(model => (
+            <button
+              key={model}
+              type="button"
+              onClick={() => handleChange('billingModel', model)}
+              className={`p-3 rounded-lg border text-left transition-colors ${
+                form.billingModel === model
+                  ? model === 'PPSA'
+                    ? 'border-blue-500 bg-blue-600/10 text-blue-300'
+                    : 'border-purple-500 bg-purple-600/10 text-purple-300'
+                  : 'border-[#2A2A2A] bg-[#1A1A1A] text-slate-400 hover:border-[#3A3A3A]'
+              }`}
+            >
+              <p className="font-semibold text-sm">{model}</p>
+              <p className="text-xs mt-0.5 opacity-70">
+                {model === 'PPSA' ? 'Pay per booked appointment' : 'Flat monthly retainer'}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="label">Status</label>
@@ -117,18 +148,30 @@ export default function ClientForm({ client, onSaved, onCancel }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="label">Price / Shown Appointment ($)</label>
-          <input className="input" type="number" min="0" step="0.01" value={form.pricePerAppointment}
-            onChange={e => handleChange('pricePerAppointment', parseFloat(e.target.value) || 0)} />
+      {form.billingModel === 'PPSA' ? (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="label">Default Price per Appointment ($)</label>
+            <input className="input" type="number" min="0" step="0.01" value={form.pricePerAppointment}
+              onChange={e => handleChange('pricePerAppointment', parseFloat(e.target.value) || 0)} />
+          </div>
+          <div>
+            <label className="label">Min Profit Threshold ($/mo)</label>
+            <input className="input" type="number" min="0" step="0.01" value={form.minProfitThreshold}
+              onChange={e => handleChange('minProfitThreshold', parseFloat(e.target.value) || 0)} />
+            <p className="text-slate-500 text-xs mt-1">Alert if monthly profit drops below this</p>
+          </div>
         </div>
-        <div>
-          <label className="label">Min Profit Threshold ($/mo)</label>
-          <input className="input" type="number" min="0" step="0.01" value={form.minProfitThreshold}
-            onChange={e => handleChange('minProfitThreshold', parseFloat(e.target.value) || 0)} />
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="label">Monthly Retainer Fee ($)</label>
+            <input className="input" type="number" min="0" step="0.01" value={form.retainerFee}
+              onChange={e => handleChange('retainerFee', parseFloat(e.target.value) || 0)} />
+            <p className="text-slate-500 text-xs mt-1">Default fee (can be overridden per month)</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div>
         <label className="label">Notes</label>

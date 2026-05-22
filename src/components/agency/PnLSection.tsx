@@ -4,6 +4,7 @@ import {
   calcClientPerformance, calcPnL, calcTrendData, momChange,
   fmtMoney, fmtPct,
 } from '../../services/agencyMetrics';
+import { calcTiersRevenue } from '../../services/metrics';
 import { getAgencyMonthData } from '../../services/storage';
 import RatedMetricCard from './RatedMetricCard';
 import { AlertTriangle, TrendingDown, DollarSign } from 'lucide-react';
@@ -54,8 +55,8 @@ export default function PnLSection({ month, prevMonth, data, onUpdate }: Props) 
   // P&L table rows
   const tableRows: { label: string; value: number; indent?: boolean; bold?: boolean; separator?: boolean; positive?: boolean }[] = [
     { label: 'Existing Client Revenue',       value: clientStats.totalRevenue,           indent: true },
-    { label: 'New Client Revenue (Ads)',       value: data.adsNewClients * data.adsAvgShownAppts * data.adsPricePerAppt, indent: true },
-    { label: 'New Client Revenue (SMS)',       value: data.smsNewClients * data.smsAvgShownAppts * data.smsPricePerAppt, indent: true },
+    { label: 'New Client Revenue (Ads)',       value: calcTiersRevenue(data.adsPricingTiers ?? []), indent: true },
+    { label: 'New Client Revenue (SMS)',       value: calcTiersRevenue(data.smsPricingTiers ?? []), indent: true },
     { label: 'Retainer / Other Revenue',      value: data.retainerRevenue,               indent: true },
     { label: 'Total Revenue',                 value: pnl.totalRevenue,                   bold: true },
     { label: '', value: 0, separator: true },

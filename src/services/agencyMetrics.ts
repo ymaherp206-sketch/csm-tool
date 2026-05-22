@@ -1,6 +1,6 @@
 import type { AgencyMonthData, BenchmarkConfig } from '../types';
 import { getClients, getFinancials, getAgencyMonthData } from './storage';
-import { calcRevenue } from './metrics';
+import { calcTiersRevenue, calcTiersBooked } from './metrics';
 import { format as fmt, subMonths } from 'date-fns';
 
 export type Rating = 'Good' | 'Average' | 'Poor';
@@ -23,96 +23,92 @@ export function rate(value: number, cfg: BenchmarkConfig): Rating {
 export interface ChannelMetrics {
   spend: number;
   newClients: number;
-  // raw input
-  totalShownAppts: number;
-  pricePerAppt: number;
+  revenue: number;
   totalLeads: number;
   totalBookedAppts: number;
-  // derived
-  avgShownAppts: number;
-  revenue: number;
+  totalReplies: number;
   profit: number;
   margin: number;
   cac: number;
   cpl: number;
   costPerBookedAppt: number;
-  costPerShownAppt: number;
   leadToBookedRate: number;
-  showRate: number;
   breakEvenClients: number;
+  roas: number;
+  revenuePerClient: number;
+  costPerAcquiredRevenue: number;
+  costPerReply: number;
+  replyToBookedRate: number;
 }
 
-// totalShownAppts is the raw number; avgShownAppts is always derived.
 export function calcChannelMetrics(
   spend: number,
   newClients: number,
-  totalShownAppts: number,
-  pricePerAppt: number,
+  revenue: number,
   totalLeads: number,
   totalBookedAppts: number,
+  totalReplies = 0,
 ): ChannelMetrics {
-  const avgShownAppts = newClients > 0 ? totalShownAppts / newClients : 0;
-  const revenue = totalShownAppts * pricePerAppt;
   const profit = revenue - spend;
   const margin = revenue > 0 ? (profit / revenue) * 100 : NaN;
   const cac = newClients > 0 ? spend / newClients : NaN;
   const cpl = totalLeads > 0 ? spend / totalLeads : NaN;
   const costPerBookedAppt = totalBookedAppts > 0 ? spend / totalBookedAppts : NaN;
-  const costPerShownAppt = totalShownAppts > 0 ? spend / totalShownAppts : NaN;
   const leadToBookedRate = totalLeads > 0 ? (totalBookedAppts / totalLeads) * 100 : NaN;
-  const showRate = totalBookedAppts > 0 ? (totalShownAppts / totalBookedAppts) * 100 : NaN;
   const avgRevPerClient = newClients > 0 ? revenue / newClients : 0;
   const breakEvenClients = avgRevPerClient > 0 ? spend / avgRevPerClient : NaN;
+  const roas = spend > 0 ? revenue / spend : NaN;
+  const revenuePerClient = newClients > 0 ? revenue / newClients : NaN;
+  const costPerAcquiredRevenue = revenue > 0 ? (spend / revenue) * 100 : NaN;
+  const costPerReply = totalReplies > 0 ? spend / totalReplies : NaN;
+  const replyToBookedRate = totalReplies > 0 ? (totalBookedAppts / totalReplies) * 100 : NaN;
 
   return {
-    spend, newClients, totalShownAppts, pricePerAppt, totalLeads, totalBookedAppts,
-    avgShownAppts, revenue, profit, margin, cac, cpl,
-    costPerBookedAppt, costPerShownAppt, leadToBookedRate, showRate, breakEvenClients,
+    spend, newClients, revenue, totalLeads, totalBookedAppts, totalReplies,
+    profit, margin, cac, cpl, costPerBookedAppt,
+    leadToBookedRate, breakEvenClients, roas, revenuePerClient,
+    costPerAcquiredRevenue, costPerReply, replyToBookedRate,
   };
 }
 
 export function calcAdsMetrics(d: AgencyMonthData): ChannelMetrics {
-  return calcChannelMetrics(
-    d.adsSpend, d.adsNewClients, d.adsTotalShownAppts, d.adsPricePerAppt,
-    d.adsTotalLeads, d.adsTotalBookedAppts,
-  );
+  const revenue = calcTiersRevenue(d.adsPricingTiers ?? []);
+  return calcChannelMetrics(d.adsSpend, d.adsNewClients, revenue, d.adsTotalLeads, d.adsTotalBookedAppts, 0);
 }
 
 export function calcSmsMetrics(d: AgencyMonthData): ChannelMetrics {
-  return calcChannelMetrics(
-    d.smsSpend, d.smsNewClients, d.smsTotalShownAppts, d.smsPricePerAppt,
-    d.smsTotalLeads, d.smsTotalBookedAppts,
-  );
+  const revenue = calcTiersRevenue(d.smsPricingTiers ?? []);
+  return calcChannelMetrics(d.smsSpend, d.smsNewClients, revenue, d.smsTotalLeads, d.smsTotalBookedAppts, d.smsTotalReplies);
 }
 
 // ── Client performance averages (Section 2) ───────────────────────────────────
 
 export interface ClientPerformanceStats {
   clientCount: number;
-  totalShownAppts: number;
+  totalBookedAppts: number;
   totalRevenue: number;
   totalAdSpend: number;
   totalProfit: number;
-  avgShownAppts: number;
+  avgBookedAppts: number;
   avgRevenue: number;
   avgAdSpend: number;
   avgProfit: number;
   avgMargin: number;
   avgROAS: number;
-  avgCostPerShownAppt: number;
+  avgCostPerBookedAppt: number;
 }
 
 export function calcClientPerformance(month: string): ClientPerformanceStats {
   const clients = getClients().filter(c => c.status === 'Active');
   const allF = getFinancials().filter(f => f.month === month);
 
-  let totalShown = 0, totalRev = 0, totalSpend = 0, count = 0;
+  let totalBooked = 0, totalRev = 0, totalSpend = 0, count = 0;
 
   for (const c of clients) {
     const f = allF.find(x => x.clientId === c.id);
     if (!f) continue;
-    const rev = calcRevenue(f.appointmentsShown, c.pricePerAppointment);
-    totalShown += f.appointmentsShown;
+    const rev = calcTiersRevenue(f.pricingTiers ?? []);
+    totalBooked += calcTiersBooked(f.pricingTiers ?? []);
     totalRev += rev;
     totalSpend += f.adSpend;
     count++;
@@ -122,17 +118,17 @@ export function calcClientPerformance(month: string): ClientPerformanceStats {
 
   return {
     clientCount: count,
-    totalShownAppts: totalShown,
+    totalBookedAppts: totalBooked,
     totalRevenue: totalRev,
     totalAdSpend: totalSpend,
     totalProfit,
-    avgShownAppts: count > 0 ? totalShown / count : NaN,
+    avgBookedAppts: count > 0 ? totalBooked / count : NaN,
     avgRevenue: count > 0 ? totalRev / count : NaN,
     avgAdSpend: count > 0 ? totalSpend / count : NaN,
     avgProfit: count > 0 ? totalProfit / count : NaN,
     avgMargin: totalRev > 0 ? (totalProfit / totalRev) * 100 : NaN,
     avgROAS: totalSpend > 0 ? totalRev / totalSpend : NaN,
-    avgCostPerShownAppt: totalShown > 0 ? totalSpend / totalShown : NaN,
+    avgCostPerBookedAppt: totalBooked > 0 ? totalSpend / totalBooked : NaN,
   };
 }
 
@@ -153,10 +149,7 @@ export interface PnLSummary {
 }
 
 export function calcPnL(d: AgencyMonthData, clientStats: ClientPerformanceStats): PnLSummary {
-  const ads = calcAdsMetrics(d);
-  const sms = calcSmsMetrics(d);
-
-  const newClientRevenue = ads.revenue + sms.revenue;
+  const newClientRevenue = calcTiersRevenue(d.adsPricingTiers ?? []) + calcTiersRevenue(d.smsPricingTiers ?? []);
   const totalRevenue = newClientRevenue + d.retainerRevenue + clientStats.totalRevenue;
   const totalAcqSpend = d.adsSpend + d.smsSpend;
   const totalClientAdSpend = clientStats.totalAdSpend;

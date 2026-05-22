@@ -1,4 +1,4 @@
-import type { ClientStatus } from '../../types';
+import type { ClientStatus, BillingModel } from '../../types';
 
 export function StatusBadge({ status }: { status: ClientStatus }) {
   if (status === 'Active') return <span className="badge-green">Active</span>;
@@ -26,6 +26,11 @@ export function ProfitBadge({ isUnprofitable, isCumulativeLoss }: { isUnprofitab
   if (isUnprofitable) return <span className="badge-red">Consider Dropping</span>;
   if (isCumulativeLoss) return <span className="badge-amber">Cumulative Loss Risk</span>;
   return null;
+}
+
+export function BillingModelBadge({ model }: { model: BillingModel }) {
+  if (model === 'Retainer') return <span className="badge-purple">Retainer</span>;
+  return <span className="badge-blue">PPSA</span>;
 }
 
 export function RenewalBadge({ daysLeft }: { daysLeft: number }) {

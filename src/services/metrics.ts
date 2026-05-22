@@ -1,9 +1,10 @@
 import type {
-  Client, MonthlyFinancials, ClientWithMetrics, ChurnRiskBreakdown
+  Client, MonthlyFinancials, RetainerMonthData, ClientWithMetrics, ChurnRiskBreakdown, PricingTier
 } from '../types';
 import {
   getClientFinancials, getClientHappiness, getClientActivity,
-  getClientNextAction, getClientJobs
+  getClientNextAction, getClientJobs,
+  getRetainerMonthData, getRetainerMonthsForClient,
 } from './storage';
 import { differenceInDays, parseISO, format, subMonths } from 'date-fns';
 
@@ -14,6 +15,14 @@ export function calcRevenue(shown: number, price: number): number {
 export function calcShowRate(shown: number, booked: number): number {
   if (!booked) return 0;
   return (shown / booked) * 100;
+}
+
+export function calcTiersRevenue(tiers: PricingTier[]): number {
+  return tiers.reduce((sum, t) => sum + t.price * t.booked, 0);
+}
+
+export function calcTiersBooked(tiers: PricingTier[]): number {
+  return tiers.reduce((sum, t) => sum + t.booked, 0);
 }
 
 export function calcProfit(revenue: number, adSpend: number): number {
@@ -49,50 +58,41 @@ export function calcChurnRisk(
     happinessPts = 20; // unknown = moderate
   }
 
-  // Profit trend (0–25 points)
+  // Profit trend (0–35 points)
   let profitTrendPts = 0;
   const sorted = [...financials].sort((a, b) => b.month.localeCompare(a.month));
   if (sorted.length >= 2) {
     const latest = sorted[0];
     const prev = sorted[1];
-    const latestRevenue = calcRevenue(latest.appointmentsShown, client.pricePerAppointment);
-    const prevRevenue = calcRevenue(prev.appointmentsShown, client.pricePerAppointment);
+    const latestRevenue = calcTiersRevenue(latest.pricingTiers ?? []);
+    const prevRevenue = calcTiersRevenue(prev.pricingTiers ?? []);
     const latestProfit = calcProfit(latestRevenue, latest.adSpend);
     const prevProfit = calcProfit(prevRevenue, prev.adSpend);
     if (latestProfit < prevProfit) {
       const drop = prevProfit > 0 ? (prevProfit - latestProfit) / prevProfit : 1;
-      profitTrendPts = Math.min(25, Math.round(drop * 25));
+      profitTrendPts = Math.min(35, Math.round(drop * 35));
     }
   } else if (sorted.length === 1) {
     const f = sorted[0];
-    const rev = calcRevenue(f.appointmentsShown, client.pricePerAppointment);
+    const rev = calcTiersRevenue(f.pricingTiers ?? []);
     const profit = calcProfit(rev, f.adSpend);
-    if (profit < 0) profitTrendPts = 25;
-    else if (profit < client.minProfitThreshold) profitTrendPts = 12;
+    if (profit < 0) profitTrendPts = 35;
+    else if (profit < client.minProfitThreshold) profitTrendPts = 17;
   }
 
-  // Days since last activity (0–20 points)
+  // Days since last activity (0–25 points)
   let activityPts = 0;
   if (lastActivityDate) {
     const days = differenceInDays(new Date(), parseISO(lastActivityDate));
-    if (days > 30) activityPts = 20;
-    else if (days > 14) activityPts = 12;
+    if (days > 30) activityPts = 25;
+    else if (days > 14) activityPts = 15;
     else if (days > 7) activityPts = 6;
   } else {
     activityPts = 15; // no activity logged
   }
 
-  // Show rate (0–15 points)
-  let showRatePts = 0;
-  if (sorted.length > 0) {
-    const f = sorted[0];
-    const rate = calcShowRate(f.appointmentsShown, f.appointmentsBooked);
-    if (rate < 40) showRatePts = 15;
-    else if (rate < 60) showRatePts = 8;
-    else if (rate < 75) showRatePts = 3;
-  }
-
-  const totalPts = happinessPts + profitTrendPts + activityPts + showRatePts;
+  // happiness(40) + profitTrend(35) + activity(25) = 100
+  const totalPts = happinessPts + profitTrendPts + activityPts;
   const score = Math.round((totalPts / 100) * 10);
   const capped = Math.min(10, Math.max(1, score));
 
@@ -103,7 +103,7 @@ export function calcChurnRisk(
     happinessScore: happinessPts,
     profitTrend: profitTrendPts,
     daysSinceActivity: activityPts,
-    showRate: showRatePts,
+    showRate: 0,
     total: capped,
     level,
   };
@@ -111,50 +111,88 @@ export function calcChurnRisk(
 
 export function enrichClient(client: Client, selectedMonth?: string): ClientWithMetrics {
   const month = selectedMonth || format(new Date(), 'yyyy-MM');
-  const financials = getClientFinancials(client.id);
   const happiness = getClientHappiness(client.id);
   const activity = getClientActivity(client.id);
   const nextAction = getClientNextAction(client.id);
-
-  const currentF = financials.find(f => f.month === month) ?? null;
-  const price = client.pricePerAppointment;
-
-  const currentRevenue = currentF ? calcRevenue(currentF.appointmentsShown, price) : 0;
-  const currentAdSpend = currentF?.adSpend ?? 0;
-  const currentProfit = calcProfit(currentRevenue, currentAdSpend);
-  const currentROAS = calcROAS(currentRevenue, currentAdSpend);
-  const currentMargin = calcMargin(currentProfit, currentRevenue);
-  const currentShowRate = currentF
-    ? calcShowRate(currentF.appointmentsShown, currentF.appointmentsBooked)
-    : 0;
-
-  const totalRevenue = financials.reduce(
-    (s, f) => s + calcRevenue(f.appointmentsShown, price), 0
-  );
-  const totalAdSpend = financials.reduce((s, f) => s + f.adSpend, 0);
-  const totalProfit = totalRevenue - totalAdSpend;
-  const totalShown = financials.reduce((s, f) => s + f.appointmentsShown, 0);
-  const avgMonthlyProfit = financials.length ? totalProfit / financials.length : 0;
-
   const latestHappiness = happiness.length ? happiness[happiness.length - 1].score : null;
   const lastActivity = activity.length ? activity[0].date : null;
-
-  const churnRisk = calcChurnRisk(client, financials, latestHappiness, lastActivity);
 
   const onboardingCompletion =
     client.checklist.length > 0
       ? Math.round((client.checklist.filter(c => c.completed).length / client.checklist.length) * 100)
       : 0;
-
   const renewalDaysLeft = differenceInDays(parseISO(client.contractEndDate), new Date());
   const isRenewalSoon = renewalDaysLeft >= 0 && renewalDaysLeft <= 30;
 
-  const isUnprofitable = currentF !== null && currentProfit < client.minProfitThreshold;
-  const isCumulativeLossRisk = totalAdSpend > 0 && totalAdSpend >= totalRevenue * 0.9;
+  let currentMonthFinancials: MonthlyFinancials | null = null;
+  let currentRetainerData: RetainerMonthData | null = null;
+  let currentRevenue = 0;
+  let currentAdSpend = 0;
+  let currentProfit = 0;
+  let currentROAS = 0;
+  let currentMargin = 0;
+  let currentShowRate = 0;
+  let totalRevenue = 0;
+  let totalAdSpend = 0;
+  let totalShown = 0;
+  let avgMonthlyProfit = 0;
+  let isUnprofitable = false;
+  let isCumulativeLossRisk = false;
+  let churnRisk: ChurnRiskBreakdown;
+
+  if (client.billingModel === 'Retainer') {
+    const rd = getRetainerMonthData(client.id, month);
+    currentRetainerData = rd;
+    const fee = rd.retainerFee > 0 ? rd.retainerFee : client.retainerFee;
+    currentRevenue = fee;
+    currentAdSpend = 0; // agency's cost is zero
+    currentProfit = fee;
+    currentROAS = 0;
+    currentMargin = fee > 0 ? 100 : 0;
+    currentShowRate = 0;
+
+    const allRetainer = getRetainerMonthsForClient(client.id);
+    totalRevenue = allRetainer.reduce((s, r) => {
+      const f = r.retainerFee > 0 ? r.retainerFee : client.retainerFee;
+      return s + f;
+    }, 0);
+    totalAdSpend = 0;
+    totalShown = allRetainer.reduce((s, r) => s + r.appointmentsBooked, 0);
+    const monthsWithData = allRetainer.filter(r => r.retainerFee > 0 || client.retainerFee > 0).length;
+    avgMonthlyProfit = monthsWithData > 0 ? totalRevenue / monthsWithData : client.retainerFee;
+
+    churnRisk = calcChurnRisk(client, [], latestHappiness, lastActivity);
+    isUnprofitable = false;
+    isCumulativeLossRisk = false;
+  } else {
+    const financials = getClientFinancials(client.id);
+    const currentF = financials.find(f => f.month === month) ?? null;
+    currentMonthFinancials = currentF;
+
+    currentRevenue = currentF ? calcTiersRevenue(currentF.pricingTiers ?? []) : 0;
+    currentAdSpend = currentF?.adSpend ?? 0;
+    currentProfit = calcProfit(currentRevenue, currentAdSpend);
+    currentROAS = calcROAS(currentRevenue, currentAdSpend);
+    currentMargin = calcMargin(currentProfit, currentRevenue);
+    currentShowRate = 0;
+
+    totalRevenue = financials.reduce((s, f) => s + calcTiersRevenue(f.pricingTiers ?? []), 0);
+    totalAdSpend = financials.reduce((s, f) => s + f.adSpend, 0);
+    const totalProfit = totalRevenue - totalAdSpend;
+    totalShown = financials.reduce((s, f) => s + calcTiersBooked(f.pricingTiers ?? []), 0);
+    avgMonthlyProfit = financials.length ? totalProfit / financials.length : 0;
+
+    churnRisk = calcChurnRisk(client, financials, latestHappiness, lastActivity);
+    isUnprofitable = currentF !== null && currentProfit < client.minProfitThreshold;
+    isCumulativeLossRisk = totalAdSpend > 0 && totalAdSpend >= totalRevenue * 0.9;
+  }
+
+  const totalProfit = totalRevenue - totalAdSpend;
 
   return {
     ...client,
-    currentMonthFinancials: currentF,
+    currentMonthFinancials,
+    currentRetainerData,
     currentRevenue,
     currentProfit,
     currentAdSpend,
@@ -164,7 +202,7 @@ export function enrichClient(client: Client, selectedMonth?: string): ClientWith
     totalRevenue,
     totalAdSpend,
     totalProfit,
-    totalShownAppointments: totalShown,
+    totalBookedAppointments: totalShown,
     avgMonthlyProfit,
     happinessScore: latestHappiness,
     churnRisk,
@@ -197,12 +235,17 @@ export function getAgencyMonthlyData(clients: Client[], months: number = 6) {
     let revenue = 0, adSpend = 0, jobsCount = 0, jobsValue = 0;
 
     for (const client of clients) {
-      const price = client.pricePerAppointment;
-      const allF = getClientFinancials(client.id);
-      const f = allF.find(x => x.month === month);
-      if (f) {
-        revenue += calcRevenue(f.appointmentsShown, price);
-        adSpend += f.adSpend;
+      if (client.billingModel === 'Retainer') {
+        const rd = getRetainerMonthData(client.id, month);
+        revenue += rd.retainerFee > 0 ? rd.retainerFee : client.retainerFee;
+        // retainer clients' ad spend is NOT agency cost — excluded
+      } else {
+        const allF = getClientFinancials(client.id);
+        const f = allF.find(x => x.month === month);
+        if (f) {
+          revenue += calcTiersRevenue(f.pricingTiers ?? []);
+          adSpend += f.adSpend;
+        }
       }
       const jobs = getClientJobs(client.id).filter(
         j => j.date.startsWith(month)

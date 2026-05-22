@@ -1,6 +1,12 @@
 export type ClientStatus = 'Active' | 'Inactive' | 'Archived';
 export type CommChannel = 'WhatsApp' | 'Email' | 'Slack' | 'Phone';
 export type ActivityType = 'Call' | 'Meeting' | 'Message' | 'Follow-up' | 'Email' | 'Note';
+export type BillingModel = 'PPSA' | 'Retainer';
+
+export interface PricingTier {
+  price: number;
+  booked: number;
+}
 
 export interface ChecklistItem {
   id: string;
@@ -19,8 +25,10 @@ export interface Client {
   commChannel: CommChannel;
   notes: string;
   checklist: ChecklistItem[];
-  pricePerAppointment: number;
-  minProfitThreshold: number;
+  billingModel: BillingModel;
+  pricePerAppointment: number;  // PPSA: price per shown appt; Retainer: 0
+  retainerFee: number;          // Retainer: monthly fee; PPSA: 0
+  minProfitThreshold: number;   // PPSA only
   createdAt: string;
   updatedAt: string;
 }
@@ -28,9 +36,19 @@ export interface Client {
 export interface MonthlyFinancials {
   clientId: string;
   month: string;
-  appointmentsBooked: number;
-  appointmentsShown: number;
+  pricingTiers: PricingTier[];
   adSpend: number;
+}
+
+export interface RetainerMonthData {
+  clientId: string;
+  month: string;
+  retainerFee: number;          // what they pay agency this month
+  clientAdSpend: number;        // their own ad spend — reference only, NOT agency cost
+  appointmentsBooked: number;
+  closedJobsCount: number;
+  closedJobsValue: number;
+  clientLeads: number;          // optional, for client CPL
 }
 
 export interface ClosedJob {
@@ -83,6 +101,11 @@ export interface AgencyBenchmarks {
   costPerShownAppt: BenchmarkConfig;
   leadToBookedRate: BenchmarkConfig;
   showRate: BenchmarkConfig;
+  roas: BenchmarkConfig;
+  revenuePerClient: BenchmarkConfig;
+  costPerAcquiredRevenue: BenchmarkConfig;
+  costPerReply: BenchmarkConfig;
+  replyToBookedRate: BenchmarkConfig;
 }
 
 export interface AgencySettings {
@@ -90,6 +113,7 @@ export interface AgencySettings {
   logoUrl: string;
   defaultPricePerAppointment: number;
   defaultProfitThreshold: number;
+  defaultBillingModel: BillingModel;
   csmNames: string[];
   benchmarks: AgencyBenchmarks;
 }
@@ -105,22 +129,21 @@ export interface ChurnRiskBreakdown {
 
 export interface AgencyMonthData {
   month: string;
-  // Ads Acquisition
+  // Ads Acquisition — Calculator 1 (performance)
   adsSpend: number;
   adsNewClients: number;
-  adsTotalShownAppts: number;   // raw input; avgShownAppts is derived
-  adsPricePerAppt: number;
   adsTotalLeads: number;
   adsTotalBookedAppts: number;
-  // SMS Acquisition
+  // Ads Acquisition — Calculator 2 (revenue via multi-tier pricing)
+  adsPricingTiers: PricingTier[];
+  // SMS Acquisition — Calculator 1 (performance)
   smsSpend: number;
   smsNewClients: number;
-  smsTotalShownAppts: number;   // raw input; avgShownAppts is derived
-  smsPricePerAppt: number;
   smsTotalLeads: number;
   smsTotalBookedAppts: number;
-  smsCostPerReply: number;
-  smsCostPerBookedCall: number;
+  smsTotalReplies: number;
+  // SMS Acquisition — Calculator 2 (revenue via multi-tier pricing)
+  smsPricingTiers: PricingTier[];
   // P&L
   retainerRevenue: number;
   operatingCosts: number;
@@ -128,6 +151,7 @@ export interface AgencyMonthData {
 
 export interface ClientWithMetrics extends Client {
   currentMonthFinancials: MonthlyFinancials | null;
+  currentRetainerData: RetainerMonthData | null;
   currentRevenue: number;
   currentProfit: number;
   currentAdSpend: number;
@@ -137,7 +161,7 @@ export interface ClientWithMetrics extends Client {
   totalRevenue: number;
   totalAdSpend: number;
   totalProfit: number;
-  totalShownAppointments: number;
+  totalBookedAppointments: number;
   avgMonthlyProfit: number;
   happinessScore: number | null;
   churnRisk: ChurnRiskBreakdown;

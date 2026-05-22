@@ -5,32 +5,32 @@ import type { ClientWithMetrics } from '../types';
 import {
   getClientFinancials, getClientJobs, getSettings
 } from './storage';
-import { calcRevenue, calcProfit, calcROAS, calcShowRate } from './metrics';
+import { calcTiersRevenue, calcTiersBooked, calcProfit, calcROAS } from './metrics';
 
 export function exportClientCSV(client: ClientWithMetrics, _month?: string): void {
   const financials = getClientFinancials(client.id);
-  const price = client.pricePerAppointment;
 
   const rows = financials
     .sort((a, b) => a.month.localeCompare(b.month))
     .map(f => {
-      const rev = calcRevenue(f.appointmentsShown, price);
+      const tiers = f.pricingTiers ?? [];
+      const rev = calcTiersRevenue(tiers);
+      const booked = calcTiersBooked(tiers);
+      const avgPrice = booked > 0 ? rev / booked : 0;
       const profit = calcProfit(rev, f.adSpend);
       const roas = calcROAS(rev, f.adSpend);
-      const showRate = calcShowRate(f.appointmentsShown, f.appointmentsBooked);
       return [
         f.month,
-        f.appointmentsBooked,
-        f.appointmentsShown,
-        showRate.toFixed(1) + '%',
+        booked,
         `$${rev.toFixed(2)}`,
+        avgPrice > 0 ? `$${avgPrice.toFixed(2)}` : '—',
         `$${f.adSpend.toFixed(2)}`,
         `$${profit.toFixed(2)}`,
         roas > 0 ? roas.toFixed(2) + 'x' : '—',
       ];
     });
 
-  const header = ['Month', 'Booked', 'Shown', 'Show Rate', 'Revenue', 'Ad Spend', 'Profit', 'ROAS'];
+  const header = ['Month', 'Total Booked', 'Revenue', 'Avg Price/Appt', 'Ad Spend', 'Profit', 'ROAS'];
   const csv = [header, ...rows].map(r => r.join(',')).join('\n');
 
   downloadFile(`${client.name.replace(/\s+/g, '_')}_report.csv`, csv, 'text/csv');
@@ -41,7 +41,6 @@ export function exportClientPDF(client: ClientWithMetrics): void {
   const doc = new jsPDF();
   const financials = getClientFinancials(client.id).sort((a, b) => a.month.localeCompare(b.month));
   const jobs = getClientJobs(client.id);
-  const price = client.pricePerAppointment;
 
   // Header
   doc.setFillColor(10, 10, 10);
@@ -76,16 +75,17 @@ export function exportClientPDF(client: ClientWithMetrics): void {
 
   // Monthly financials table
   const tableRows = financials.map(f => {
-    const rev = calcRevenue(f.appointmentsShown, price);
+    const tiers = f.pricingTiers ?? [];
+    const rev = calcTiersRevenue(tiers);
+    const booked = calcTiersBooked(tiers);
+    const avgPrice = booked > 0 ? rev / booked : 0;
     const profit = calcProfit(rev, f.adSpend);
     const roas = calcROAS(rev, f.adSpend);
-    const showRate = calcShowRate(f.appointmentsShown, f.appointmentsBooked);
     return [
       f.month,
-      f.appointmentsBooked,
-      f.appointmentsShown,
-      showRate.toFixed(1) + '%',
+      booked,
       `$${rev.toFixed(0)}`,
+      avgPrice > 0 ? `$${avgPrice.toFixed(0)}` : '—',
       `$${f.adSpend.toFixed(0)}`,
       `$${profit.toFixed(0)}`,
       roas > 0 ? roas.toFixed(2) + 'x' : '—',
@@ -94,7 +94,7 @@ export function exportClientPDF(client: ClientWithMetrics): void {
 
   autoTable(doc, {
     startY: 105,
-    head: [['Month', 'Booked', 'Shown', 'Show Rate', 'Revenue', 'Ad Spend', 'Profit', 'ROAS']],
+    head: [['Month', 'Total Booked', 'Revenue', 'Avg Price/Appt', 'Ad Spend', 'Profit', 'ROAS']],
     body: tableRows,
     styles: { fontSize: 8 },
     headStyles: { fillColor: [99, 102, 241] },
@@ -129,12 +129,11 @@ export function exportAgencyCSV(clients: ClientWithMetrics[], month: string): vo
       c.currentAdSpend.toFixed(2),
       c.currentProfit.toFixed(2),
       c.currentROAS > 0 ? c.currentROAS.toFixed(2) : '0',
-      c.currentShowRate.toFixed(1) + '%',
       c.happinessScore ?? '—',
       c.churnRisk.total,
     ]);
 
-  const header = ['Client', 'CSM', 'Revenue', 'Ad Spend', 'Profit', 'ROAS', 'Show Rate', 'Happiness', 'Churn Risk'];
+  const header = ['Client', 'CSM', 'Revenue', 'Ad Spend', 'Profit', 'ROAS', 'Happiness', 'Churn Risk'];
   const csv = [header, ...rows].map(r => r.join(',')).join('\n');
 
   downloadFile(`agency_report_${month}.csv`, csv, 'text/csv');

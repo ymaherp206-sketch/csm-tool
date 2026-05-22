@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getClient, saveClient } from '../services/storage';
+import { getClient, saveClient, getRetainerMonthData } from '../services/storage';
 import { enrichClient } from '../services/metrics';
 import { exportClientCSV, exportClientPDF } from '../services/export';
 import type { Client } from '../types';
@@ -12,13 +12,14 @@ import {
 import Modal from '../components/ui/Modal';
 import ClientForm from '../components/clients/ClientForm';
 import FinancialLog from '../components/financial/FinancialLog';
+import RetainerFinancialLog from '../components/financial/RetainerFinancialLog';
 import JobsSection from '../components/jobs/JobsSection';
 import HappinessSection from '../components/happiness/HappinessSection';
 import ActivitySection from '../components/activity/ActivitySection';
 import ChurnSection from '../components/churn/ChurnSection';
-import { StatusBadge, HappinessBadge, ChurnBadge, RenewalBadge } from '../components/ui/Badges';
+import { StatusBadge, HappinessBadge, ChurnBadge, RenewalBadge, BillingModelBadge } from '../components/ui/Badges';
 import {
-  calcRevenue, calcProfit, calcBreakEven
+  calcTiersRevenue, calcTiersBooked, calcProfit
 } from '../services/metrics';
 import { getClientFinancials } from '../services/storage';
 import { format as fmt, subMonths } from 'date-fns';
@@ -78,13 +79,23 @@ export default function ClientDetailPage() {
     reload();
   }
 
-  // Previous month comparison
+  const isRetainer = (client.billingModel ?? 'PPSA') === 'Retainer';
   const prevMonth = prevMonthStr(selectedMonth);
   const allFinancials = getClientFinancials(client.id);
-  const prevF = allFinancials.find(f => f.month === prevMonth) ?? null;
-  const prevRevenue = prevF ? calcRevenue(prevF.appointmentsShown, client.pricePerAppointment) : 0;
-  const prevProfit = prevF ? calcProfit(prevRevenue, prevF.adSpend) : 0;
-  const prevAdSpend = prevF?.adSpend ?? 0;
+
+  // Previous month comparison
+  let prevRevenue = 0, prevProfit = 0, prevAdSpend = 0;
+  if (isRetainer) {
+    const prevRD = getRetainerMonthData(client.id, prevMonth);
+    prevRevenue = prevRD.retainerFee > 0 ? prevRD.retainerFee : client.retainerFee;
+    prevProfit = prevRevenue;
+    prevAdSpend = prevRD.clientAdSpend;
+  } else {
+    const prevF = allFinancials.find(f => f.month === prevMonth) ?? null;
+    prevRevenue = prevF ? calcTiersRevenue(prevF.pricingTiers ?? []) : 0;
+    prevProfit = prevF ? calcProfit(prevRevenue, prevF.adSpend) : 0;
+    prevAdSpend = prevF?.adSpend ?? 0;
+  }
 
   const momRevenue = prevRevenue > 0 ? ((enriched.currentRevenue - prevRevenue) / prevRevenue) * 100 : null;
   const momProfit = prevProfit !== 0 ? ((enriched.currentProfit - prevProfit) / Math.abs(prevProfit)) * 100 : null;
@@ -95,9 +106,14 @@ export default function ClientDetailPage() {
     const d = subMonths(new Date(selectedMonth + '-01'), 5 - i);
     const m = fmt(d, 'yyyy-MM');
     const label = fmt(d, 'MMM yy');
+    if (isRetainer) {
+      const rd = getRetainerMonthData(client.id, m);
+      const rev = rd.retainerFee > 0 ? rd.retainerFee : client.retainerFee;
+      return { label, revenue: rev, adSpend: rd.clientAdSpend, profit: rev };
+    }
     const f = allFinancials.find(x => x.month === m);
     if (!f) return { label, revenue: 0, adSpend: 0, profit: 0 };
-    const rev = calcRevenue(f.appointmentsShown, client.pricePerAppointment);
+    const rev = calcTiersRevenue(f.pricingTiers ?? []);
     const spend = f.adSpend;
     return { label, revenue: rev, adSpend: spend, profit: rev - spend };
   });
@@ -113,8 +129,9 @@ export default function ClientDetailPage() {
             <ArrowLeft size={18} />
           </button>
           <div>
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex items-center gap-3 mb-1 flex-wrap">
               <h1 className="text-xl font-semibold text-slate-100">{client.name}</h1>
+              <BillingModelBadge model={client.billingModel ?? 'PPSA'} />
               <StatusBadge status={client.status} />
               {enriched.isRenewalSoon && <RenewalBadge daysLeft={enriched.renewalDaysLeft} />}
             </div>
@@ -195,12 +212,25 @@ export default function ClientDetailPage() {
               Monthly Financials — {selectedMonth}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
-              {[
-                { label: 'Revenue', value: `$${enriched.currentRevenue.toFixed(0)}`, trend: momRevenue, color: 'text-slate-200' },
-                { label: 'Ad Spend', value: `$${enriched.currentAdSpend.toFixed(0)}`, trend: momAdSpend ? -momAdSpend : null, color: 'text-slate-200' },
-                { label: 'Net Profit', value: `$${enriched.currentProfit.toFixed(0)}`, trend: momProfit, color: enriched.currentProfit >= 0 ? 'text-green-400' : 'text-red-400' },
-                { label: 'ROAS', value: enriched.currentROAS > 0 ? `${enriched.currentROAS.toFixed(2)}x` : '—', color: 'text-slate-200' },
-              ].map(m => (
+              {((): { label: string; value: string; trend?: number | null; color: string }[] => {
+                if (isRetainer) {
+                  const rd = enriched.currentRetainerData;
+                  const clientROAS = rd && rd.clientAdSpend > 0 && rd.closedJobsValue > 0
+                    ? (rd.closedJobsValue / rd.clientAdSpend).toFixed(2) + 'x' : '—';
+                  return [
+                    { label: 'Retainer Fee', value: enriched.currentRevenue > 0 ? `$${enriched.currentRevenue.toFixed(0)}` : '—', trend: momRevenue, color: 'text-slate-200' },
+                    { label: "Client's Ad Spend *", value: rd && rd.clientAdSpend > 0 ? `$${rd.clientAdSpend.toFixed(0)}` : '—', trend: momAdSpend ? -momAdSpend : null, color: 'text-slate-400' },
+                    { label: 'Agency Profit', value: enriched.currentProfit > 0 ? `$${enriched.currentProfit.toFixed(0)}` : '—', trend: momProfit, color: 'text-green-400' },
+                    { label: 'Client ROAS *', value: clientROAS, color: 'text-slate-200' },
+                  ];
+                }
+                return [
+                  { label: 'Revenue', value: `$${enriched.currentRevenue.toFixed(0)}`, trend: momRevenue, color: 'text-slate-200' },
+                  { label: 'Ad Spend', value: `$${enriched.currentAdSpend.toFixed(0)}`, trend: momAdSpend ? -momAdSpend : null, color: 'text-slate-200' },
+                  { label: 'Net Profit', value: `$${enriched.currentProfit.toFixed(0)}`, trend: momProfit, color: enriched.currentProfit >= 0 ? 'text-green-400' : 'text-red-400' },
+                  { label: 'ROAS', value: enriched.currentROAS > 0 ? `${enriched.currentROAS.toFixed(2)}x` : '—', color: 'text-slate-200' },
+                ];
+              })().map(m => (
                 <div key={m.label} className="bg-[#1A1A1A] rounded-lg p-3 border border-[#2A2A2A]">
                   <p className="text-slate-500 text-xs mb-1">{m.label}</p>
                   <p className={`font-bold text-lg ${m.color}`}>{m.value}</p>
@@ -212,20 +242,47 @@ export default function ClientDetailPage() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { label: 'Show Rate', value: `${enriched.currentShowRate.toFixed(1)}%`, icon: <Target size={14} /> },
-                { label: 'Margin', value: `${enriched.currentMargin.toFixed(1)}%`, icon: <BarChart2 size={14} /> },
-                { label: 'Break-even', value: currentF ? `${calcBreakEven(currentF.adSpend, client.pricePerAppointment).toFixed(0)} appts` : '—', icon: <Target size={14} /> },
-              ].map(m => (
-                <div key={m.label} className="bg-[#1A1A1A] rounded-lg p-3 border border-[#2A2A2A]">
-                  <div className="flex items-center gap-1 text-slate-500 text-xs mb-1">
-                    {m.icon} {m.label}
-                  </div>
-                  <p className="text-slate-200 font-semibold text-sm">{m.value}</p>
+            {isRetainer ? (() => {
+              const rd = enriched.currentRetainerData;
+              const closedJobs = rd ? rd.closedJobsCount : 0;
+              const avgJobVal = rd && rd.closedJobsCount > 0 ? `$${(rd.closedJobsValue / rd.closedJobsCount).toFixed(0)}` : '—';
+              const clientCPL = rd && rd.clientLeads > 0 && rd.clientAdSpend > 0 ? `$${(rd.clientAdSpend / rd.clientLeads).toFixed(0)}` : '—';
+              return (
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { label: 'Closed Jobs', value: closedJobs > 0 ? String(closedJobs) : '—', icon: <CheckSquare size={14} /> },
+                    { label: 'Avg Job Value', value: avgJobVal, icon: <DollarSign size={14} /> },
+                    { label: 'Client CPL *', value: clientCPL, icon: <BarChart2 size={14} /> },
+                  ].map(m => (
+                    <div key={m.label} className="bg-[#1A1A1A] rounded-lg p-3 border border-[#2A2A2A]">
+                      <div className="flex items-center gap-1 text-slate-500 text-xs mb-1">{m.icon} {m.label}</div>
+                      <p className="text-slate-200 font-semibold text-sm">{m.value}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              );
+            })() : (() => {
+              const tiers = currentF?.pricingTiers ?? [];
+              const totalBooked = calcTiersBooked(tiers);
+              const revenue = calcTiersRevenue(tiers);
+              const avgPrice = totalBooked > 0 ? revenue / totalBooked : 0;
+              const adSpend = currentF?.adSpend ?? 0;
+              const breakEven = avgPrice > 0 ? adSpend / avgPrice : 0;
+              return (
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { label: 'Total Booked', value: totalBooked > 0 ? String(totalBooked) + ' appts' : '—', icon: <Target size={14} /> },
+                    { label: 'Margin', value: enriched.currentMargin > 0 || enriched.currentRevenue > 0 ? `${enriched.currentMargin.toFixed(1)}%` : '—', icon: <BarChart2 size={14} /> },
+                    { label: 'Break-even', value: adSpend > 0 && avgPrice > 0 ? `${breakEven.toFixed(0)} appts` : '—', icon: <Target size={14} /> },
+                  ].map(m => (
+                    <div key={m.label} className="bg-[#1A1A1A] rounded-lg p-3 border border-[#2A2A2A]">
+                      <div className="flex items-center gap-1 text-slate-500 text-xs mb-1">{m.icon} {m.label}</div>
+                      <p className="text-slate-200 font-semibold text-sm">{m.value}</p>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Cumulative LTV */}
@@ -239,7 +296,7 @@ export default function ClientDetailPage() {
                 { label: 'Total LTV', value: `$${enriched.totalRevenue.toFixed(0)}` },
                 { label: 'Total Ad Spend', value: `$${enriched.totalAdSpend.toFixed(0)}` },
                 { label: 'Total Net Profit', value: `$${enriched.totalProfit.toFixed(0)}`, color: enriched.totalProfit >= 0 ? 'text-green-400' : 'text-red-400' },
-                { label: 'Shown Appts', value: enriched.totalShownAppointments },
+                { label: 'Total Booked', value: enriched.totalBookedAppointments > 0 ? enriched.totalBookedAppointments + ' appts' : '—' },
                 { label: 'Avg Monthly Profit', value: `$${enriched.avgMonthlyProfit.toFixed(0)}` },
               ].map(m => (
                 <div key={m.label} className="bg-[#1A1A1A] rounded-lg p-3 border border-[#2A2A2A]">
@@ -273,12 +330,20 @@ export default function ClientDetailPage() {
 
           {/* Financial Log input */}
           <div className="card p-5">
-            <FinancialLog
-              clientId={client.id}
-              pricePerAppointment={client.pricePerAppointment}
-              month={selectedMonth}
-              onSaved={reload}
-            />
+            {isRetainer ? (
+              <RetainerFinancialLog
+                clientId={client.id}
+                defaultRetainerFee={client.retainerFee}
+                month={selectedMonth}
+                onSaved={reload}
+              />
+            ) : (
+              <FinancialLog
+                clientId={client.id}
+                month={selectedMonth}
+                onSaved={reload}
+              />
+            )}
           </div>
 
           {/* Jobs */}
@@ -317,10 +382,12 @@ export default function ClientDetailPage() {
                   {enriched.renewalDaysLeft >= 0 && ` (${enriched.renewalDaysLeft}d)`}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 text-xs">Price/appt</span>
-                <span className="text-slate-300 text-xs">${client.pricePerAppointment}</span>
-              </div>
+              {!isRetainer && client.pricePerAppointment > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 text-xs">Default price/appt</span>
+                  <span className="text-slate-300 text-xs">${client.pricePerAppointment}</span>
+                </div>
+              )}
             </div>
           </div>
 

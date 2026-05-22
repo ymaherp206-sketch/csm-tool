@@ -1,73 +1,70 @@
 import { useState } from 'react';
-import type { MonthlyFinancials } from '../../types';
+import type { MonthlyFinancials, PricingTier } from '../../types';
 import { saveFinancials, getFinancialsForMonth } from '../../services/storage';
-import {
-  calcRevenue, calcShowRate, calcProfit, calcMargin, calcROAS, calcBreakEven
-} from '../../services/metrics';
+import { calcTiersRevenue, calcTiersBooked, calcMargin, calcROAS } from '../../services/metrics';
+import PricingTiersInput from '../agency/PricingTiersInput';
 import { TrendingUp } from 'lucide-react';
 
 interface Props {
   clientId: string;
-  pricePerAppointment: number;
   month: string;
   onSaved: () => void;
 }
 
-export default function FinancialLog({ clientId, pricePerAppointment, month, onSaved }: Props) {
+const DEFAULT_TIERS: PricingTier[] = [{ price: 0, booked: 0 }, { price: 0, booked: 0 }];
+
+function fmt$(n: number, dec = 0) {
+  if (!isFinite(n) || n === 0) return '—';
+  return '$' + n.toLocaleString(undefined, { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+function fmtPct(n: number) {
+  if (!isFinite(n) || n === 0) return '—';
+  return n.toFixed(1) + '%';
+}
+
+export default function FinancialLog({ clientId, month, onSaved }: Props) {
   const existing = getFinancialsForMonth(clientId, month);
+  const existingTiers = existing?.pricingTiers;
 
-  const [form, setForm] = useState({
-    appointmentsBooked: existing?.appointmentsBooked ?? 0,
-    appointmentsShown: existing?.appointmentsShown ?? 0,
-    adSpend: existing?.adSpend ?? 0,
-  });
+  const [tiers, setTiers] = useState<PricingTier[]>(() =>
+    existingTiers && existingTiers.length > 0 ? existingTiers : [...DEFAULT_TIERS]
+  );
+  const [adSpend, setAdSpend] = useState(existing?.adSpend ?? 0);
 
-  function handleUpdate(patch: Partial<typeof form>) {
-    const updated = { ...form, ...patch };
-    setForm(updated);
-    const entry: MonthlyFinancials = { clientId, month, ...updated };
+  function save(newTiers: PricingTier[], newSpend: number) {
+    const entry: MonthlyFinancials = { clientId, month, pricingTiers: newTiers, adSpend: newSpend };
     saveFinancials(entry);
     onSaved();
   }
 
-  const revenue = calcRevenue(form.appointmentsShown, pricePerAppointment);
-  const showRate = calcShowRate(form.appointmentsShown, form.appointmentsBooked);
-  const profit = calcProfit(revenue, form.adSpend);
-  const margin = calcMargin(profit, revenue);
-  const roas = calcROAS(revenue, form.adSpend);
-  const breakEven = calcBreakEven(form.adSpend, pricePerAppointment);
+  function handleTierChange(newTiers: PricingTier[]) {
+    setTiers(newTiers);
+    save(newTiers, adSpend);
+  }
 
-  const hasRevenue = form.appointmentsShown > 0 && pricePerAppointment > 0;
-  const hasSpend = form.adSpend > 0;
-  const hasAnyData = hasRevenue || hasSpend;
+  function handleAdSpend(v: number) {
+    setAdSpend(v);
+    save(tiers, v);
+  }
+
+  const totalBooked = calcTiersBooked(tiers);
+  const revenue = calcTiersRevenue(tiers);
+  const avgPrice = totalBooked > 0 ? revenue / totalBooked : NaN;
+  const profit = revenue - adSpend;
+  const margin = calcMargin(profit, revenue);
+  const roas = calcROAS(revenue, adSpend);
+  const breakEven = isFinite(avgPrice) && avgPrice > 0 ? adSpend / avgPrice : NaN;
+
+  const hasData = revenue > 0 || adSpend > 0;
 
   const metrics = [
-    {
-      label: 'Revenue',
-      value: hasRevenue ? `$${revenue.toFixed(0)}` : '—',
-    },
-    {
-      label: 'Show Rate',
-      value: form.appointmentsBooked > 0 ? `${showRate.toFixed(1)}%` : '—',
-    },
-    {
-      label: 'Gross Profit',
-      value: hasAnyData ? `$${profit.toFixed(0)}` : '—',
-      color: hasAnyData ? (profit >= 0 ? 'text-green-400' : 'text-red-400') : undefined,
-    },
-    {
-      label: 'Margin',
-      value: hasRevenue ? `${margin.toFixed(1)}%` : '—',
-      color: hasRevenue ? (margin >= 0 ? 'text-slate-200' : 'text-red-400') : undefined,
-    },
-    {
-      label: 'ROAS',
-      value: hasRevenue && hasSpend ? `${roas.toFixed(2)}x` : '—',
-    },
-    {
-      label: 'Break-even',
-      value: hasSpend && pricePerAppointment > 0 ? `${breakEven.toFixed(0)} appts` : '—',
-    },
+    { label: 'Total Booked', value: totalBooked > 0 ? String(totalBooked) : '—' },
+    { label: 'Avg Price / Appt', value: fmt$(avgPrice, 2) },
+    { label: 'Revenue', value: revenue > 0 ? `$${revenue.toFixed(0)}` : '—' },
+    { label: 'Gross Profit', value: hasData ? fmt$(profit) : '—', color: hasData ? (profit >= 0 ? 'text-green-400' : 'text-red-400') : undefined },
+    { label: 'Margin', value: revenue > 0 ? fmtPct(margin) : '—' },
+    { label: 'ROAS', value: revenue > 0 && adSpend > 0 ? `${roas.toFixed(2)}x` : '—' },
+    { label: 'Break-even', value: adSpend > 0 && isFinite(breakEven) ? `${breakEven.toFixed(0)} appts` : '—' },
   ];
 
   return (
@@ -77,44 +74,28 @@ export default function FinancialLog({ clientId, pricePerAppointment, month, onS
         Financial Log — {month}
       </h3>
 
-      <div className="grid grid-cols-3 gap-4 mb-5">
-        <div>
-          <label className="label">Booked Appointments</label>
+      <div className="mb-5">
+        <p className="text-slate-500 text-xs uppercase tracking-wide font-medium mb-3">
+          Appointment Pricing Tiers
+        </p>
+        <PricingTiersInput tiers={tiers} onChange={handleTierChange} />
+      </div>
+
+      <div className="mb-5">
+        <label className="label">Ad Spend ($)</label>
+        <div className="relative w-40">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none">$</span>
           <input
-            className="input"
-            type="number"
-            min="0"
-            value={form.appointmentsBooked || ''}
+            className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg pl-7 pr-3 py-2 text-slate-200 text-sm w-full focus:outline-none focus:border-indigo-500 transition-colors placeholder-slate-600"
+            type="number" min="0" step="1"
+            value={adSpend || ''}
             placeholder="0"
-            onChange={e => handleUpdate({ appointmentsBooked: parseInt(e.target.value) || 0 })}
-          />
-        </div>
-        <div>
-          <label className="label">Shown Appointments</label>
-          <input
-            className="input"
-            type="number"
-            min="0"
-            value={form.appointmentsShown || ''}
-            placeholder="0"
-            onChange={e => handleUpdate({ appointmentsShown: parseInt(e.target.value) || 0 })}
-          />
-        </div>
-        <div>
-          <label className="label">Ad Spend ($)</label>
-          <input
-            className="input"
-            type="number"
-            min="0"
-            step="0.01"
-            value={form.adSpend || ''}
-            placeholder="0"
-            onChange={e => handleUpdate({ adSpend: parseFloat(e.target.value) || 0 })}
+            onChange={e => handleAdSpend(parseFloat(e.target.value) || 0)}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {metrics.map(m => (
           <div key={m.label} className="bg-[#111111] rounded-lg p-3 border border-[#2A2A2A]">
             <p className="text-slate-500 text-xs mb-1">{m.label}</p>

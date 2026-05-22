@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { ClientWithMetrics } from '../../types';
-import { StatusBadge, HappinessBadge, ChurnBadge, ProfitBadge, RenewalBadge } from '../ui/Badges';
+import { StatusBadge, HappinessBadge, ChurnBadge, ProfitBadge, RenewalBadge, BillingModelBadge } from '../ui/Badges';
 import { DollarSign, CheckSquare, ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -20,7 +20,10 @@ export default function ClientCard({ client }: Props) {
             <p className="text-slate-500 text-xs mt-0.5">{client.businessType}</p>
           )}
         </div>
-        <StatusBadge status={client.status} />
+        <div className="flex items-center gap-1.5">
+          <BillingModelBadge model={client.billingModel ?? 'PPSA'} />
+          <StatusBadge status={client.status} />
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-4">

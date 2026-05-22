@@ -1,12 +1,13 @@
 import type {
-  Client, MonthlyFinancials, ClosedJob, HappinessEntry,
+  Client, MonthlyFinancials, RetainerMonthData, ClosedJob, HappinessEntry,
   ActivityLog, NextAction, AgencySettings, AgencyBenchmarks,
-  ChecklistItem, AgencyMonthData
+  ChecklistItem, AgencyMonthData, PricingTier
 } from '../types';
 
 const KEYS = {
   clients: 'csm_clients',
   financials: 'csm_financials',
+  retainerMonths: 'csm_retainer_months',
   jobs: 'csm_jobs',
   happiness: 'csm_happiness',
   activity: 'csm_activity',
@@ -68,6 +69,35 @@ export function saveFinancials(entry: MonthlyFinancials): void {
   if (idx >= 0) all[idx] = entry;
   else all.push(entry);
   set(KEYS.financials, all);
+}
+
+// ── Retainer Month Data ───────────────────────────────────────────────────────
+const RETAINER_MONTH_DEFAULTS: Omit<RetainerMonthData, 'clientId' | 'month'> = {
+  retainerFee: 0, clientAdSpend: 0, appointmentsBooked: 0,
+  closedJobsCount: 0, closedJobsValue: 0, clientLeads: 0,
+};
+
+export const EMPTY_TIERS: PricingTier[] = [{ price: 0, booked: 0 }, { price: 0, booked: 0 }];
+
+export function getRetainerMonths(): RetainerMonthData[] {
+  return get<RetainerMonthData[]>(KEYS.retainerMonths, []);
+}
+
+export function getRetainerMonthData(clientId: string, month: string): RetainerMonthData {
+  const stored = getRetainerMonths().find(r => r.clientId === clientId && r.month === month);
+  return { ...RETAINER_MONTH_DEFAULTS, ...stored, clientId, month };
+}
+
+export function getRetainerMonthsForClient(clientId: string): RetainerMonthData[] {
+  return getRetainerMonths().filter(r => r.clientId === clientId);
+}
+
+export function saveRetainerMonthData(data: RetainerMonthData): void {
+  const all = getRetainerMonths();
+  const idx = all.findIndex(r => r.clientId === data.clientId && r.month === data.month);
+  if (idx >= 0) all[idx] = data;
+  else all.push(data);
+  set(KEYS.retainerMonths, all);
 }
 
 // ── Jobs ──────────────────────────────────────────────────────────────────────
@@ -152,13 +182,18 @@ export function saveNextAction(action: NextAction): void {
 
 // ── Settings ──────────────────────────────────────────────────────────────────
 export const DEFAULT_BENCHMARKS: AgencyBenchmarks = {
-  cac:              { good: 500,  avg: 1500, higherIsBetter: false },
-  margin:           { good: 30,   avg: 15,   higherIsBetter: true  },
-  cpl:              { good: 25,   avg: 75,   higherIsBetter: false },
-  costPerBookedAppt:{ good: 75,   avg: 200,  higherIsBetter: false },
-  costPerShownAppt: { good: 120,  avg: 300,  higherIsBetter: false },
-  leadToBookedRate: { good: 15,   avg: 7,    higherIsBetter: true  },
-  showRate:         { good: 75,   avg: 50,   higherIsBetter: true  },
+  cac:                   { good: 500,  avg: 1500, higherIsBetter: false },
+  margin:                { good: 30,   avg: 15,   higherIsBetter: true  },
+  cpl:                   { good: 25,   avg: 75,   higherIsBetter: false },
+  costPerBookedAppt:     { good: 75,   avg: 200,  higherIsBetter: false },
+  costPerShownAppt:      { good: 120,  avg: 300,  higherIsBetter: false },
+  leadToBookedRate:      { good: 15,   avg: 7,    higherIsBetter: true  },
+  showRate:              { good: 75,   avg: 50,   higherIsBetter: true  },
+  roas:                  { good: 3,    avg: 1.5,  higherIsBetter: true  },
+  revenuePerClient:      { good: 5000, avg: 2000, higherIsBetter: true  },
+  costPerAcquiredRevenue:{ good: 20,   avg: 50,   higherIsBetter: false },
+  costPerReply:          { good: 5,    avg: 20,   higherIsBetter: false },
+  replyToBookedRate:     { good: 20,   avg: 10,   higherIsBetter: true  },
 };
 
 const DEFAULT_SETTINGS: AgencySettings = {
@@ -166,6 +201,7 @@ const DEFAULT_SETTINGS: AgencySettings = {
   logoUrl: '',
   defaultPricePerAppointment: 100,
   defaultProfitThreshold: 500,
+  defaultBillingModel: 'PPSA',
   csmNames: ['CSM 1'],
   benchmarks: DEFAULT_BENCHMARKS,
 };
@@ -182,11 +218,10 @@ export function saveSettings(settings: AgencySettings): void {
 
 // ── Agency Month Data ─────────────────────────────────────────────────────────
 const AGENCY_MONTH_DEFAULTS: Omit<AgencyMonthData, 'month'> = {
-  adsSpend: 0, adsNewClients: 0, adsTotalShownAppts: 0, adsPricePerAppt: 0,
-  adsTotalLeads: 0, adsTotalBookedAppts: 0,
-  smsSpend: 0, smsNewClients: 0, smsTotalShownAppts: 0, smsPricePerAppt: 0,
-  smsTotalLeads: 0, smsTotalBookedAppts: 0,
-  smsCostPerReply: 0, smsCostPerBookedCall: 0,
+  adsSpend: 0, adsNewClients: 0, adsTotalLeads: 0, adsTotalBookedAppts: 0,
+  adsPricingTiers: [],
+  smsSpend: 0, smsNewClients: 0, smsTotalLeads: 0, smsTotalBookedAppts: 0,
+  smsTotalReplies: 0, smsPricingTiers: [],
   retainerRevenue: 0, operatingCosts: 0,
 };
 

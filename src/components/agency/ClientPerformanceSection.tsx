@@ -16,17 +16,17 @@ export default function ClientPerformanceSection({ month, prevMonth }: Props) {
   const hasData = stats.clientCount > 0;
 
   const cards = [
-    { label: 'Avg Shown Appts / Client', value: fmtNum(stats.avgShownAppts), mom: mom(stats.avgShownAppts, prev.avgShownAppts) },
-    { label: 'Avg Revenue / Client',     value: fmtMoney(stats.avgRevenue),   mom: mom(stats.avgRevenue, prev.avgRevenue) },
-    { label: 'Avg Ad Spend / Client',    value: fmtMoney(stats.avgAdSpend),   mom: mom(stats.avgAdSpend, prev.avgAdSpend) },
-    { label: 'Avg Profit / Client',      value: fmtMoney(stats.avgProfit),    mom: mom(stats.avgProfit, prev.avgProfit) },
-    { label: 'Avg Profit Margin',        value: fmtPct(stats.avgMargin),      mom: mom(stats.avgMargin, prev.avgMargin) },
-    { label: 'Avg ROAS',                 value: stats.avgROAS > 0 ? fmtNum(stats.avgROAS, 2) + 'x' : '—', mom: mom(stats.avgROAS, prev.avgROAS) },
-    { label: 'Avg Cost / Shown Appt',   value: fmtMoney(stats.avgCostPerShownAppt, 2), mom: mom(stats.avgCostPerShownAppt, prev.avgCostPerShownAppt) },
-    { label: 'Total Shown Appts',        value: stats.totalShownAppts > 0 ? String(stats.totalShownAppts) : '—', mom: mom(stats.totalShownAppts, prev.totalShownAppts) },
-    { label: 'Total Revenue',            value: fmtMoney(stats.totalRevenue), mom: mom(stats.totalRevenue, prev.totalRevenue) },
-    { label: 'Total Client Ad Spend',   value: fmtMoney(stats.totalAdSpend), mom: mom(stats.totalAdSpend, prev.totalAdSpend) },
-    { label: 'Total Net Profit',         value: fmtMoney(stats.totalProfit),  mom: mom(stats.totalProfit, prev.totalProfit) },
+    { label: 'Avg Booked Appts / Client', value: fmtNum(stats.avgBookedAppts), mom: mom(stats.avgBookedAppts, prev.avgBookedAppts) },
+    { label: 'Avg Revenue / Client',      value: fmtMoney(stats.avgRevenue),   mom: mom(stats.avgRevenue, prev.avgRevenue) },
+    { label: 'Avg Ad Spend / Client',     value: fmtMoney(stats.avgAdSpend),   mom: mom(stats.avgAdSpend, prev.avgAdSpend) },
+    { label: 'Avg Profit / Client',       value: fmtMoney(stats.avgProfit),    mom: mom(stats.avgProfit, prev.avgProfit) },
+    { label: 'Avg Profit Margin',         value: fmtPct(stats.avgMargin),      mom: mom(stats.avgMargin, prev.avgMargin) },
+    { label: 'Avg ROAS',                  value: stats.avgROAS > 0 ? fmtNum(stats.avgROAS, 2) + 'x' : '—', mom: mom(stats.avgROAS, prev.avgROAS) },
+    { label: 'Avg Cost / Booked Appt',    value: fmtMoney(stats.avgCostPerBookedAppt, 2), mom: mom(stats.avgCostPerBookedAppt, prev.avgCostPerBookedAppt) },
+    { label: 'Total Booked Appts',        value: stats.totalBookedAppts > 0 ? String(stats.totalBookedAppts) : '—', mom: mom(stats.totalBookedAppts, prev.totalBookedAppts) },
+    { label: 'Total Revenue',             value: fmtMoney(stats.totalRevenue), mom: mom(stats.totalRevenue, prev.totalRevenue) },
+    { label: 'Total Client Ad Spend',    value: fmtMoney(stats.totalAdSpend), mom: mom(stats.totalAdSpend, prev.totalAdSpend) },
+    { label: 'Total Net Profit',          value: fmtMoney(stats.totalProfit),  mom: mom(stats.totalProfit, prev.totalProfit) },
   ];
 
   return (
