@@ -182,9 +182,9 @@ export function saveSettings(settings: AgencySettings): void {
 
 // ── Agency Month Data ─────────────────────────────────────────────────────────
 const AGENCY_MONTH_DEFAULTS: Omit<AgencyMonthData, 'month'> = {
-  adsSpend: 0, adsNewClients: 0, adsAvgShownAppts: 0, adsPricePerAppt: 0,
+  adsSpend: 0, adsNewClients: 0, adsTotalShownAppts: 0, adsPricePerAppt: 0,
   adsTotalLeads: 0, adsTotalBookedAppts: 0,
-  smsSpend: 0, smsNewClients: 0, smsAvgShownAppts: 0, smsPricePerAppt: 0,
+  smsSpend: 0, smsNewClients: 0, smsTotalShownAppts: 0, smsPricePerAppt: 0,
   smsTotalLeads: 0, smsTotalBookedAppts: 0,
   smsCostPerReply: 0, smsCostPerBookedCall: 0,
   retainerRevenue: 0, operatingCosts: 0,

@@ -108,14 +108,14 @@ export interface AgencyMonthData {
   // Ads Acquisition
   adsSpend: number;
   adsNewClients: number;
-  adsAvgShownAppts: number;
+  adsTotalShownAppts: number;   // raw input; avgShownAppts is derived
   adsPricePerAppt: number;
   adsTotalLeads: number;
   adsTotalBookedAppts: number;
   // SMS Acquisition
   smsSpend: number;
   smsNewClients: number;
-  smsAvgShownAppts: number;
+  smsTotalShownAppts: number;   // raw input; avgShownAppts is derived
   smsPricePerAppt: number;
   smsTotalLeads: number;
   smsTotalBookedAppts: number;

@@ -6,7 +6,7 @@ import { format as fmt, subMonths } from 'date-fns';
 export type Rating = 'Good' | 'Average' | 'Poor';
 
 export function rate(value: number, cfg: BenchmarkConfig): Rating {
-  if (!isFinite(value) || value === 0) return 'Poor';
+  if (!isFinite(value)) return 'Poor';
   if (cfg.higherIsBetter) {
     if (value >= cfg.good) return 'Good';
     if (value >= cfg.avg)  return 'Average';
@@ -23,11 +23,13 @@ export function rate(value: number, cfg: BenchmarkConfig): Rating {
 export interface ChannelMetrics {
   spend: number;
   newClients: number;
-  avgShownAppts: number;
+  // raw input
+  totalShownAppts: number;
   pricePerAppt: number;
   totalLeads: number;
   totalBookedAppts: number;
-  totalShownAppts: number;
+  // derived
+  avgShownAppts: number;
   revenue: number;
   profit: number;
   margin: number;
@@ -40,44 +42,45 @@ export interface ChannelMetrics {
   breakEvenClients: number;
 }
 
+// totalShownAppts is the raw number; avgShownAppts is always derived.
 export function calcChannelMetrics(
   spend: number,
   newClients: number,
-  avgShownAppts: number,
+  totalShownAppts: number,
   pricePerAppt: number,
   totalLeads: number,
   totalBookedAppts: number,
 ): ChannelMetrics {
-  const totalShownAppts = newClients * avgShownAppts;
+  const avgShownAppts = newClients > 0 ? totalShownAppts / newClients : 0;
   const revenue = totalShownAppts * pricePerAppt;
   const profit = revenue - spend;
-  const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
-  const cac = newClients > 0 ? spend / newClients : 0;
-  const cpl = totalLeads > 0 ? spend / totalLeads : 0;
-  const costPerBookedAppt = totalBookedAppts > 0 ? spend / totalBookedAppts : 0;
-  const costPerShownAppt = totalShownAppts > 0 ? spend / totalShownAppts : 0;
-  const leadToBookedRate = totalLeads > 0 ? (totalBookedAppts / totalLeads) * 100 : 0;
-  const showRate = totalBookedAppts > 0 ? (totalShownAppts / totalBookedAppts) * 100 : 0;
+  const margin = revenue > 0 ? (profit / revenue) * 100 : NaN;
+  const cac = newClients > 0 ? spend / newClients : NaN;
+  const cpl = totalLeads > 0 ? spend / totalLeads : NaN;
+  const costPerBookedAppt = totalBookedAppts > 0 ? spend / totalBookedAppts : NaN;
+  const costPerShownAppt = totalShownAppts > 0 ? spend / totalShownAppts : NaN;
+  const leadToBookedRate = totalLeads > 0 ? (totalBookedAppts / totalLeads) * 100 : NaN;
+  const showRate = totalBookedAppts > 0 ? (totalShownAppts / totalBookedAppts) * 100 : NaN;
   const avgRevPerClient = newClients > 0 ? revenue / newClients : 0;
-  const breakEvenClients = avgRevPerClient > 0 ? spend / avgRevPerClient : 0;
+  const breakEvenClients = avgRevPerClient > 0 ? spend / avgRevPerClient : NaN;
 
   return {
-    spend, newClients, avgShownAppts, pricePerAppt, totalLeads, totalBookedAppts,
-    totalShownAppts, revenue, profit, margin, cac, cpl,
+    spend, newClients, totalShownAppts, pricePerAppt, totalLeads, totalBookedAppts,
+    avgShownAppts, revenue, profit, margin, cac, cpl,
     costPerBookedAppt, costPerShownAppt, leadToBookedRate, showRate, breakEvenClients,
   };
 }
 
 export function calcAdsMetrics(d: AgencyMonthData): ChannelMetrics {
   return calcChannelMetrics(
-    d.adsSpend, d.adsNewClients, d.adsAvgShownAppts, d.adsPricePerAppt,
+    d.adsSpend, d.adsNewClients, d.adsTotalShownAppts, d.adsPricePerAppt,
     d.adsTotalLeads, d.adsTotalBookedAppts,
   );
 }
 
 export function calcSmsMetrics(d: AgencyMonthData): ChannelMetrics {
   return calcChannelMetrics(
-    d.smsSpend, d.smsNewClients, d.smsAvgShownAppts, d.smsPricePerAppt,
+    d.smsSpend, d.smsNewClients, d.smsTotalShownAppts, d.smsPricePerAppt,
     d.smsTotalLeads, d.smsTotalBookedAppts,
   );
 }
@@ -116,7 +119,6 @@ export function calcClientPerformance(month: string): ClientPerformanceStats {
   }
 
   const totalProfit = totalRev - totalSpend;
-  const avg = (n: number) => count > 0 ? n / count : 0;
 
   return {
     clientCount: count,
@@ -124,13 +126,13 @@ export function calcClientPerformance(month: string): ClientPerformanceStats {
     totalRevenue: totalRev,
     totalAdSpend: totalSpend,
     totalProfit,
-    avgShownAppts: avg(totalShown),
-    avgRevenue: avg(totalRev),
-    avgAdSpend: avg(totalSpend),
-    avgProfit: avg(totalProfit),
-    avgMargin: totalRev > 0 ? (totalProfit / totalRev) * 100 : 0,
-    avgROAS: totalSpend > 0 ? totalRev / totalSpend : 0,
-    avgCostPerShownAppt: totalShown > 0 ? totalSpend / totalShown : 0,
+    avgShownAppts: count > 0 ? totalShown / count : NaN,
+    avgRevenue: count > 0 ? totalRev / count : NaN,
+    avgAdSpend: count > 0 ? totalSpend / count : NaN,
+    avgProfit: count > 0 ? totalProfit / count : NaN,
+    avgMargin: totalRev > 0 ? (totalProfit / totalRev) * 100 : NaN,
+    avgROAS: totalSpend > 0 ? totalRev / totalSpend : NaN,
+    avgCostPerShownAppt: totalShown > 0 ? totalSpend / totalShown : NaN,
   };
 }
 
@@ -160,12 +162,12 @@ export function calcPnL(d: AgencyMonthData, clientStats: ClientPerformanceStats)
   const totalClientAdSpend = clientStats.totalAdSpend;
   const grossProfit = totalRevenue - totalClientAdSpend;
   const netProfit = grossProfit - totalAcqSpend - d.operatingCosts;
-  const grossMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
-  const netMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
+  const grossMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : NaN;
+  const netMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : NaN;
   const totalNewClients = d.adsNewClients + d.smsNewClients;
-  const blendedCAC = totalNewClients > 0 ? totalAcqSpend / totalNewClients : 0;
+  const blendedCAC = totalNewClients > 0 ? totalAcqSpend / totalNewClients : NaN;
   const totalSpend = totalAcqSpend + totalClientAdSpend + d.operatingCosts;
-  const costToRevenueRatio = totalRevenue > 0 ? (totalSpend / totalRevenue) * 100 : 0;
+  const costToRevenueRatio = totalRevenue > 0 ? (totalSpend / totalRevenue) * 100 : NaN;
 
   return {
     totalRevenue, totalClientAdSpend, totalAcqSpend, totalOperatingCosts: d.operatingCosts,
@@ -192,23 +194,24 @@ export function calcTrendData(anchorMonth: string) {
 }
 
 // ── Formatting helpers ────────────────────────────────────────────────────────
+// Use NaN/Infinity (not 0) to signal "no data" — legitimate $0 values display as $0.
 
 export function fmtMoney(n: number, decimals = 0): string {
-  if (!isFinite(n) || n === 0) return '—';
+  if (!isFinite(n)) return '—';
   return '$' + n.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 }
 
 export function fmtPct(n: number): string {
-  if (!isFinite(n) || n === 0) return '—';
+  if (!isFinite(n)) return '—';
   return n.toFixed(1) + '%';
 }
 
 export function fmtNum(n: number, decimals = 1): string {
-  if (!isFinite(n) || n === 0) return '—';
+  if (!isFinite(n)) return '—';
   return n.toFixed(decimals);
 }
 
 export function momChange(current: number, prev: number): number | null {
-  if (!prev) return null;
+  if (!prev || !isFinite(current) || !isFinite(prev)) return null;
   return ((current - prev) / Math.abs(prev)) * 100;
 }
