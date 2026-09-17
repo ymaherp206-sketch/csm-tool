@@ -1,0 +1,1843 @@
+<!-- Contractors Scaled — single-file embed. Paste into a custom code element. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..500;1,9..144,300..500&family=Geist:wght@400;500&family=Geist+Mono:wght@500&display=swap">
+<style>
+#cs-site {
+--paper: #f4efe6;
+  --paper-2: #ece5d8;
+  --paper-3: #e1d8c6;
+  --ink: #101b33;
+  --ink-2: #1b2a4a;
+  --ink-soft: #3a4560;
+  --muted: #5d6579;
+  --blue: #12264d;          
+  --blue-2: #0d1d3d;
+  --bronze: #a9743b;
+  --bronze-deep: #86571f;   
+  --bronze-light: #d3a86a;
+  --white: #fffdf9;
+  --line: rgba(16, 27, 51, 0.16);
+  --line-strong: rgba(16, 27, 51, 0.42);
+  --line-paper: rgba(244, 239, 230, 0.18);
+  --line-paper-strong: rgba(244, 239, 230, 0.5);
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --step--1: clamp(0.82rem, 0.79rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
+  --step-1: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
+  --step-2: clamp(1.5rem, 1.25rem + 1.2vw, 2.1rem);
+  --step-3: clamp(2rem, 1.5rem + 2.4vw, 3.4rem);
+  --step-4: clamp(2.6rem, 1.6rem + 4.8vw, 5.6rem);
+  --step-5: clamp(3.4rem, 1.4rem + 8.2vw, 7.75rem);
+  --gutter: clamp(1rem, 4vw, 3.5rem);
+  --measure: 34rem;
+  --max: 84rem;
+  --nav-h: 4.5rem;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur: 0.7s;
+  color-scheme: light;
+}
+#cs-site *, #cs-site *::before, #cs-site *::after {
+box-sizing: border-box;
+}
+#cs-site {
+margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+#cs-site img, #cs-site svg, #cs-site picture {
+display: block; max-width: 100%;
+}
+#cs-site img {
+height: auto;
+}
+#cs-site a {
+color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em;
+}
+#cs-site button {
+font: inherit; color: inherit;
+}
+#cs-site h1, #cs-site h2, #cs-site h3, #cs-site h4 {
+margin: 0; font-weight: 400;
+}
+#cs-site p {
+margin: 0;
+}
+#cs-site ol, #cs-site ul {
+margin: 0; padding: 0; list-style: none;
+}
+#cs-site figure {
+margin: 0;
+}
+#cs-site address {
+font-style: normal;
+}
+#cs-site :focus-visible {
+outline: 2px solid var(--bronze); outline-offset: 3px; border-radius: 2px;
+}
+#cs-site ::selection {
+background: var(--bronze-light); color: var(--ink);
+}
+#cs-site::before {
+content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 6rem 6rem;
+  opacity: 0.13;
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 85%);
+}
+#cs-site .sr-only {
+position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+#cs-site .skip {
+position: absolute; left: 1rem; top: -4rem;
+  background: var(--ink); color: var(--paper);
+  padding: 0.6rem 1rem; z-index: 100;
+  font-family: var(--font-mono); font-size: var(--step--1);
+  transition: top 0.2s;
+}
+#cs-site .skip:focus {
+top: 1rem;
+}
+#cs-site .display, #cs-site .hero__title, #cs-site .section__title, #cs-site .statement__text, #cs-site .thanks__title {
+font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 350;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+#cs-site .section__title {
+font-size: var(--step-3);
+}
+#cs-site .section__title em, #cs-site .hero__title em, #cs-site .statement__text em {
+font-style: italic;
+  font-weight: 300;
+  color: var(--bronze-deep);
+}
+#cs-site .mono, #cs-site .eyebrow, #cs-site .sheet__block, #cs-site .step__num, #cs-site .spec dt, #cs-site .work__code, #cs-site .footer__block, #cs-site .ticker, #cs-site .form label, #cs-site .form__note, #cs-site .nav__phone {
+font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+#cs-site .eyebrow {
+color: var(--muted); display: inline-flex; align-items: center; gap: 0.75rem;
+}
+#cs-site .eyebrow::before {
+content: ""; width: 1.75rem; height: 1px; background: var(--bronze);
+}
+#cs-site .lede {
+font-size: var(--step-1); line-height: 1.45; color: var(--ink-soft); max-width: var(--measure); text-wrap: pretty;
+}
+#cs-site .body {
+color: var(--ink-soft); max-width: var(--measure); text-wrap: pretty;
+}
+#cs-site .wrap {
+width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto;
+}
+#cs-site .section {
+padding-block: clamp(4.5rem, 10vw, 9rem); position: relative;
+}
+#cs-site .section--tight {
+padding-block: clamp(3rem, 7vw, 6rem);
+}
+#cs-site .section__head {
+display: grid; gap: 1.25rem; margin-bottom: clamp(2.5rem, 6vw, 4.5rem); max-width: 48rem;
+}
+#cs-site .section__index {
+display: flex; align-items: center; gap: 1rem;
+  color: var(--muted);
+}
+#cs-site .section__index::after {
+content: ""; flex: 1; height: 1px; background: var(--line); min-width: 3rem;
+}
+#cs-site .section__head .body {
+font-size: var(--step-1); line-height: 1.45;
+}
+#cs-site .rule {
+height: 1px; background: var(--line); border: 0; margin: 0;
+}
+#cs-site .is-blue {
+background: var(--blue);
+  color: var(--paper);
+  --line: var(--line-paper);
+  --line-strong: var(--line-paper-strong);
+  --muted: rgba(244, 239, 230, 0.66);
+  --ink-soft: rgba(244, 239, 230, 0.82);
+  --bronze-deep: var(--bronze-light);
+  background-image:
+    linear-gradient(var(--line-paper) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-paper) 1px, transparent 1px),
+    radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.08), transparent 55%);
+  background-size: 6rem 6rem, 6rem 6rem, 100% 100%;
+  background-blend-mode: normal;
+}
+#cs-site .is-blue ::selection {
+background: var(--bronze); color: var(--paper);
+}
+#cs-site .is-blue :focus-visible {
+outline-color: var(--bronze-light);
+}
+#cs-site .btn {
+--btn-bg: var(--ink);
+  --btn-fg: var(--paper);
+  position: relative;
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  padding: 0.95rem 1.4rem 0.95rem 1.5rem;
+  background: var(--btn-bg); color: var(--btn-fg);
+  border: 1px solid var(--btn-bg);
+  border-radius: 2px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: var(--step-0);
+  line-height: 1;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.35s var(--ease-out), border-color 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+#cs-site .btn::before {
+content: "";
+  position: absolute; inset: 0;
+  background: var(--bronze);
+  transform: translateY(101%);
+  transition: transform 0.45s var(--ease-out);
+  z-index: -1;
+}
+#cs-site .btn:hover::before, #cs-site .btn:focus-visible::before {
+transform: translateY(0);
+}
+#cs-site .btn:hover {
+border-color: var(--bronze); color: var(--white);
+}
+#cs-site .btn:active {
+transform: translateY(1px);
+}
+#cs-site .btn__arrow {
+width: 1.1em; height: 1.1em; transition: transform 0.35s var(--ease-out); flex: none;
+}
+#cs-site .btn:hover .btn__arrow {
+transform: translateX(0.3em);
+}
+#cs-site .btn--paper {
+--btn-bg: var(--paper); --btn-fg: var(--ink);
+}
+#cs-site .btn--paper:hover {
+color: var(--white);
+}
+#cs-site .btn--ghost {
+--btn-bg: transparent; --btn-fg: currentColor; border-color: var(--line-strong);
+}
+#cs-site .btn--ghost:hover {
+color: var(--white);
+}
+#cs-site .btn--lg {
+padding: 1.15rem 1.6rem 1.15rem 1.75rem; font-size: var(--step-1);
+}
+#cs-site .link {
+display: inline-flex; align-items: center; gap: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 0.15rem;
+  transition: border-color 0.3s;
+}
+#cs-site .link:hover {
+border-color: var(--bronze); color: var(--bronze-deep);
+}
+#cs-site .nav {
+position: sticky; top: 0; z-index: 50;
+  height: var(--nav-h);
+  display: flex; align-items: center;
+  transition: background-color 0.4s var(--ease-out), box-shadow 0.4s, backdrop-filter 0.4s;
+}
+#cs-site .nav::after {
+content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--line);
+  opacity: 0; transition: opacity 0.4s;
+}
+#cs-site .nav.is-scrolled {
+background: rgba(244, 239, 230, 0.92); backdrop-filter: saturate(140%) blur(12px); -webkit-backdrop-filter: saturate(140%) blur(12px);
+}
+#cs-site .nav.is-scrolled::after {
+opacity: 1;
+}
+#cs-site .nav__inner {
+display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+}
+#cs-site .brand {
+display: inline-flex; align-items: center; gap: 0.75rem;
+  text-decoration: none; font-weight: 500;
+  letter-spacing: -0.01em;
+  font-size: 1.05rem;
+}
+#cs-site .brand__mark {
+width: 2rem; height: 2rem; flex: none;
+}
+#cs-site .brand__mark .m-bronze {
+transition: transform 0.5s var(--ease-out); transform-origin: 26px 26px;
+}
+#cs-site .brand:hover .brand__mark .m-bronze {
+transform: rotate(90deg);
+}
+#cs-site .brand__name {
+white-space: nowrap;
+}
+#cs-site .nav__links {
+display: none; gap: 2rem;
+}
+#cs-site .nav__links a {
+text-decoration: none; font-size: var(--step--1); font-weight: 500; letter-spacing: 0.01em;
+  position: relative; padding: 0.25rem 0; color: var(--ink-soft);
+}
+#cs-site .nav__links a::after {
+content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px;
+  background: var(--bronze);
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.35s var(--ease-out);
+}
+#cs-site .nav__links a:hover {
+color: var(--ink);
+}
+#cs-site .nav__links a:hover::after {
+transform: scaleX(1); transform-origin: left;
+}
+#cs-site .nav__cta {
+display: none; align-items: center; gap: 1.5rem;
+}
+#cs-site .nav__phone {
+text-decoration: none; color: var(--ink-soft); letter-spacing: 0.02em; text-transform: none;
+}
+#cs-site .nav__phone:hover {
+color: var(--bronze-deep);
+}
+#cs-site .nav .btn {
+padding: 0.7rem 1.1rem 0.7rem 1.2rem; font-size: var(--step--1);
+}
+#cs-site .nav__toggle {
+display: inline-flex; align-items: center; gap: 0.6rem;
+  background: none; border: 1px solid var(--line-strong); border-radius: 2px;
+  padding: 0.55rem 0.85rem; cursor: pointer;
+  font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase;
+}
+#cs-site .nav__toggle .bars {
+display: inline-grid; gap: 4px; width: 16px;
+}
+#cs-site .nav__toggle .bars span {
+height: 1.5px; background: currentColor; transition: transform 0.3s var(--ease-out), opacity 0.3s;
+}
+#cs-site .nav__toggle[aria-expanded="true"] .bars span:nth-child(1) {
+transform: translateY(5.5px) rotate(45deg);
+}
+#cs-site .nav__toggle[aria-expanded="true"] .bars span:nth-child(2) {
+opacity: 0;
+}
+#cs-site .nav__toggle[aria-expanded="true"] .bars span:nth-child(3) {
+transform: translateY(-5.5px) rotate(-45deg);
+}
+#cs-site .menu {
+position: fixed; inset: var(--nav-h) 0 0 0; z-index: 40;
+  background: var(--paper);
+  padding: clamp(1.5rem, 5vw, 3rem) var(--gutter) 2rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-top: 1px solid var(--line);
+  transform: translateY(-1rem); opacity: 0; visibility: hidden;
+  transition: transform 0.4s var(--ease-out), opacity 0.3s, visibility 0s 0.3s;
+  overflow-y: auto;
+}
+#cs-site .menu.is-open {
+transform: none; opacity: 1; visibility: visible; transition: transform 0.4s var(--ease-out), opacity 0.3s;
+}
+#cs-site .menu__links {
+display: grid; gap: 0.25rem;
+}
+#cs-site .menu__links a {
+display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-display); font-size: var(--step-3); font-weight: 350; letter-spacing: -0.02em;
+  text-decoration: none; padding: 0.85rem 0; border-bottom: 1px solid var(--line);
+}
+#cs-site .menu__links a .mono {
+color: var(--muted);
+}
+#cs-site .menu__foot {
+display: grid; gap: 1rem; padding-top: 2rem;
+}
+#cs-site .menu__foot a {
+text-decoration: none;
+}
+#cs-site .menu__foot .btn {
+justify-content: center;
+}
+@media (min-width: 64em) {
+#cs-site .nav__links, #cs-site .nav__cta {
+display: flex;
+}
+#cs-site .nav__toggle, #cs-site .menu {
+display: none;
+}
+}
+#cs-site .hero {
+padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 6rem); position: relative;
+}
+#cs-site .hero__grid {
+display: grid; gap: clamp(2.5rem, 6vw, 5rem); align-items: center;
+}
+#cs-site .hero__copy {
+display: grid; gap: clamp(1.25rem, 3vw, 2rem);
+}
+#cs-site .hero__title {
+font-size: var(--step-5); line-height: 0.95; letter-spacing: -0.035em; display: flex; flex-wrap: wrap; gap: 0 0.22em;
+}
+#cs-site .hero__title .word {
+display: inline-block; position: relative;
+}
+#cs-site .hero__title .word sup {
+font-family: var(--font-mono); font-size: 0.13em; letter-spacing: 0.1em; text-transform: uppercase; font-style: normal;
+  color: var(--bronze-deep); vertical-align: baseline; position: relative; top: -0.75em; margin-left: 0.4em; font-weight: 500;
+  display: none;
+}
+#cs-site .hero__actions {
+display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem 1.75rem;
+}
+#cs-site .hero__call {
+display: inline-grid; gap: 0.15rem; text-decoration: none;
+}
+#cs-site .hero__call .mono {
+color: var(--muted);
+}
+#cs-site .hero__call strong {
+font-weight: 500; font-size: var(--step-1); letter-spacing: -0.01em; transition: color 0.3s;
+}
+#cs-site .hero__call:hover strong {
+color: var(--bronze-deep);
+}
+#cs-site .dim {
+width: min(100%, 26rem); overflow: visible; color: var(--ink-soft);
+}
+#cs-site .dim text {
+font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; fill: var(--muted);
+}
+#cs-site .dim line, #cs-site .dim path {
+stroke: currentColor; stroke-width: 1; fill: none;
+}
+#cs-site .dim .draw {
+stroke-dasharray: 400; stroke-dashoffset: 400;
+}
+#cs-site.is-loaded .dim .draw {
+animation: draw 1.4s var(--ease-out) 0.6s forwards;
+}
+#cs-site.is-loaded .dim text {
+opacity: 0; animation: fade 0.6s ease 1.5s forwards;
+}
+#cs-site .dim text {
+opacity: 1;
+}
+#cs-site .sheet {
+position: relative; border: 1px solid var(--line-strong); background: var(--paper-2); padding: 0.5rem;
+}
+#cs-site .sheet::before, #cs-site .sheet::after, #cs-site .sheet .reg::before, #cs-site .sheet .reg::after {
+content: ""; position: absolute; width: 9px; height: 9px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) center / 1px 100% no-repeat,
+    linear-gradient(var(--ink), var(--ink)) center / 100% 1px no-repeat;
+  opacity: 0.7;
+}
+#cs-site .sheet::before {
+top: -5px; left: -5px;
+}
+#cs-site .sheet::after {
+top: -5px; right: -5px;
+}
+#cs-site .sheet .reg::before {
+bottom: -5px; left: -5px;
+}
+#cs-site .sheet .reg::after {
+bottom: -5px; right: -5px;
+}
+#cs-site .sheet__img {
+position: relative; overflow: hidden; background: linear-gradient(160deg, var(--paper-3), var(--paper-2)); aspect-ratio: 4 / 3;
+}
+#cs-site .sheet__img img {
+width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); will-change: transform;
+}
+#cs-site .sheet__img.is-missing::after {
+content: attr(data-label); position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+#cs-site .sheet__img.is-missing img {
+display: none;
+}
+#cs-site .sheet__block {
+display: grid; grid-template-columns: auto 1fr auto; gap: 0.75rem;
+  padding: 0.75rem 0.25rem 0.25rem; color: var(--muted);
+  font-size: 0.7rem;
+}
+#cs-site .sheet__block span:nth-child(2) {
+text-align: center; color: var(--ink);
+}
+#cs-site .hero__sheet {
+max-width: 34rem; margin-inline: auto; width: 100%;
+}
+#cs-site .hero__sheet .sheet__img {
+aspect-ratio: 4 / 3;
+}
+#cs-site.is-loaded .hero__title .word {
+animation: rise 1s var(--ease-out) both;
+}
+#cs-site.is-loaded .hero__title .word:nth-child(2) {
+animation-delay: 0.12s;
+}
+#cs-site.is-loaded .hero__title .word:nth-child(3) {
+animation-delay: 0.24s;
+}
+#cs-site.is-loaded .hero__copy > :not(.hero__title) {
+animation: rise 1s var(--ease-out) 0.35s both;
+}
+#cs-site.is-loaded .hero__sheet {
+animation: rise 1.1s var(--ease-out) 0.2s both;
+}
+@keyframes rise {
+from {
+opacity: 0; transform: translateY(1.2rem);
+}
+to {
+opacity: 1; transform: none;
+}
+}
+@keyframes fade {
+to {
+opacity: 1;
+}
+}
+@keyframes draw {
+to {
+stroke-dashoffset: 0;
+}
+}
+@media (min-width: 64em) {
+#cs-site .hero {
+padding-block: clamp(3rem, 6vw, 6rem) clamp(4rem, 8vw, 7rem);
+}
+#cs-site .hero__grid {
+grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+}
+#cs-site .hero__title .word sup {
+display: inline;
+}
+#cs-site .hero__sheet {
+margin-inline: 0 auto; max-width: none;
+}
+#cs-site .hero__sheet .sheet__img {
+aspect-ratio: 4 / 5;
+}
+}
+#cs-site .ticker {
+border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 0.9rem 0; overflow: hidden; color: var(--muted);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+#cs-site .ticker__track {
+display: flex; width: max-content; gap: 3rem; animation: ticker 40s linear infinite;
+}
+#cs-site .ticker__track > span {
+display: inline-flex; align-items: center; gap: 3rem; white-space: nowrap;
+}
+#cs-site .ticker__track i {
+display: inline-block; width: 5px; height: 5px; background: var(--bronze); border-radius: 50%;
+}
+@keyframes ticker {
+to {
+transform: translateX(-50%);
+}
+}
+#cs-site .ticker:hover .ticker__track {
+animation-play-state: paused;
+}
+#cs-site .work__layout {
+display: grid; gap: 3rem;
+}
+#cs-site .work__stage {
+display: none;
+}
+#cs-site .work__list {
+display: grid; gap: 1rem; counter-reset: sheet;
+}
+#cs-site .work__item {
+border-top: 1px solid var(--line);
+}
+#cs-site .work__item:last-child {
+border-bottom: 1px solid var(--line);
+}
+#cs-site .work__link {
+display: grid; gap: 1rem; padding: 1.5rem 0 1.75rem; text-decoration: none;
+  transition: opacity 0.4s var(--ease-out);
+}
+#cs-site .work__row {
+display: grid; grid-template-columns: 4.5rem 1fr auto; align-items: baseline; gap: 1rem;
+}
+#cs-site .work__code {
+color: var(--muted);
+}
+#cs-site .work__title {
+font-family: var(--font-display); font-size: var(--step-2); font-weight: 350; letter-spacing: -0.02em; line-height: 1.1;
+}
+#cs-site .work__arrow {
+width: 1.4rem; height: 1.4rem; color: var(--bronze-deep); transition: transform 0.4s var(--ease-out); opacity: 0.6;
+}
+#cs-site .work__body {
+grid-column: 2 / -1; color: var(--ink-soft); max-width: 30rem; text-wrap: pretty;
+}
+#cs-site .work__thumb {
+grid-column: 1 / -1; margin-top: 0.5rem;
+}
+#cs-site .work__thumb .sheet__img {
+aspect-ratio: 16 / 10;
+}
+#cs-site .work__item.is-active .work__arrow, #cs-site .work__link:hover .work__arrow {
+transform: translate(0.25rem, -0.25rem); opacity: 1;
+}
+@media (min-width: 64em) {
+#cs-site .work__layout {
+grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(3rem, 6vw, 6rem); align-items: start;
+}
+#cs-site .work__stage {
+display: block; position: sticky; top: calc(var(--nav-h) + 2rem);
+}
+#cs-site .work__stage .sheet__img {
+aspect-ratio: 4 / 5;
+}
+#cs-site .work__stage .stack {
+position: relative; width: 100%; height: 100%;
+}
+#cs-site .work__stage .stack img, #cs-site .work__stage .stack .ph {
+position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transform: scale(1.04);
+    transition: opacity 0.9s var(--ease-out), transform 1.6s var(--ease-out);
+}
+#cs-site .work__stage .stack .ph {
+display: grid; place-items: center; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: linear-gradient(160deg, var(--paper-3), var(--paper-2));
+}
+#cs-site .work__stage .stack [data-panel].is-shown {
+opacity: 1; transform: none;
+}
+#cs-site .work__stage .sheet__block span:nth-child(2) {
+transition: opacity 0.3s;
+}
+#cs-site .work__thumb {
+display: none;
+}
+#cs-site .work__list {
+padding-top: 0.5rem;
+}
+#cs-site .work__link {
+padding: 2rem 0 2.25rem;
+}
+#cs-site .work__item:not(.is-active) .work__link {
+opacity: 0.55;
+}
+#cs-site .work__item:not(.is-active) .work__link:hover {
+opacity: 0.85;
+}
+#cs-site .work__row {
+grid-template-columns: 5.5rem 1fr auto;
+}
+}
+#cs-site .statement {
+text-align: left;
+}
+#cs-site .statement__text {
+font-size: var(--step-4); line-height: 1.05; max-width: 22ch; letter-spacing: -0.03em;
+}
+#cs-site .statement__text .hl {
+position: relative; white-space: nowrap;
+}
+#cs-site .statement__text .hl::after {
+content: ""; position: absolute; left: 0; right: 0; bottom: 0.06em; height: 0.06em;
+  background: var(--bronze); transform: scaleX(0); transform-origin: left;
+  transition: transform 1s var(--ease-out) 0.3s;
+}
+#cs-site .statement__text.is-in .hl::after {
+transform: scaleX(1);
+}
+#cs-site .statement__aside {
+color: var(--muted); max-width: 28rem; margin-top: 2rem;
+}
+@media (min-width: 64em) {
+#cs-site .statement .wrap {
+display: grid; grid-template-columns: 1fr minmax(0, 20rem); gap: 4rem; align-items: end;
+}
+#cs-site .statement__aside {
+margin-top: 0; padding-bottom: 0.5rem;
+}
+}
+#cs-site .process {
+overflow: hidden;
+}
+#cs-site .process .section__title {
+color: var(--paper);
+}
+#cs-site .steps {
+display: grid; gap: 0; position: relative; counter-reset: step;
+}
+#cs-site .step {
+position: relative; padding: 2rem 0 2.25rem;
+  border-top: 1px solid var(--line);
+  display: grid; gap: 0.75rem;
+}
+#cs-site .step:last-child {
+border-bottom: 1px solid var(--line);
+}
+#cs-site .step__num {
+color: var(--bronze-light);
+}
+#cs-site .step__dot {
+position: absolute; left: 0; top: 0; width: 100%; height: 1px;
+}
+#cs-site .step__title {
+font-family: var(--font-display); font-size: var(--step-2); font-weight: 350; letter-spacing: -0.02em; line-height: 1.1;
+}
+#cs-site .step__title small {
+display: block; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-top: 0.4rem; font-weight: 500;
+}
+#cs-site .step__body {
+color: var(--ink-soft); max-width: 26rem; text-wrap: pretty;
+}
+#cs-site .process__line {
+display: none;
+}
+@media (min-width: 64em) {
+#cs-site .steps {
+grid-template-columns: repeat(3, 1fr); gap: 3rem;
+}
+#cs-site .step {
+padding: 3rem 0 0; border: 0 !important;
+}
+#cs-site .step::before {
+content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: var(--line);
+}
+#cs-site .step::after {
+content: ""; position: absolute; top: -4px; left: 0; width: 9px; height: 9px; border-radius: 50%;
+    background: var(--bronze-light); box-shadow: 0 0 0 4px var(--blue);
+    transform: scale(0); transition: transform 0.5s var(--ease-out);
+}
+#cs-site .steps.is-in .step::after {
+transform: scale(1);
+}
+#cs-site .steps.is-in .step:nth-child(2)::after {
+transition-delay: 0.35s;
+}
+#cs-site .steps.is-in .step:nth-child(3)::after {
+transition-delay: 0.7s;
+}
+#cs-site .step::before {
+background: linear-gradient(90deg, var(--bronze-light), var(--bronze-light)) left / 0 1px no-repeat, var(--line); transition: background-size 1s var(--ease-out);
+}
+#cs-site .steps.is-in .step::before {
+background-size: 100% 1px;
+}
+#cs-site .steps.is-in .step:nth-child(2)::before {
+transition-delay: 0.35s;
+}
+#cs-site .steps.is-in .step:nth-child(3)::before {
+transition-delay: 0.7s;
+}
+}
+#cs-site .process__foot {
+margin-top: clamp(3rem, 6vw, 5rem); display: flex; flex-wrap: wrap; gap: 1.5rem 3rem; align-items: center; justify-content: space-between;
+}
+#cs-site .process__foot .body {
+max-width: 32rem;
+}
+#cs-site .spec {
+display: grid; border-top: 1px solid var(--line);
+}
+#cs-site .spec > div {
+display: grid; gap: 0.5rem; padding: 1.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+#cs-site .spec dt {
+color: var(--muted);
+}
+#cs-site .spec dd {
+margin: 0; font-size: var(--step-1); line-height: 1.35; letter-spacing: -0.01em; text-wrap: pretty;
+}
+#cs-site .spec dd small {
+display: block; margin-top: 0.4rem; font-size: var(--step-0); color: var(--muted); letter-spacing: 0;
+}
+@media (min-width: 48em) {
+#cs-site .spec {
+grid-template-columns: 1fr 1fr; column-gap: 3rem;
+}
+}
+@media (min-width: 64em) {
+#cs-site .spec > div {
+grid-template-columns: 9rem 1fr; gap: 2rem; padding: 2rem 0; align-items: start;
+}
+#cs-site .spec dt {
+padding-top: 0.45rem;
+}
+}
+#cs-site .why__layout {
+display: grid; gap: 2rem;
+}
+#cs-site .why__layout .section__head, #cs-site .faq__layout .section__head, #cs-site .contact__intro .section__head {
+margin-bottom: 0;
+}
+@media (min-width: 64em) {
+#cs-site .why__layout {
+grid-template-columns: minmax(0, 24rem) 1fr; gap: 5rem; align-items: start;
+}
+#cs-site .why__layout .section__head {
+position: sticky; top: calc(var(--nav-h) + 2rem); margin-bottom: 0;
+}
+}
+#cs-site .contractors {
+background: var(--paper-2);
+}
+#cs-site .contractors__grid {
+display: grid; gap: 2rem;
+}
+#cs-site .contractors .section__head {
+margin-bottom: 0;
+}
+#cs-site .contractors__aside {
+display: grid; gap: 1.5rem; align-content: end;
+}
+#cs-site .contractors__points {
+display: grid; gap: 0.75rem; border-top: 1px solid var(--line); padding-top: 1.25rem;
+}
+#cs-site .contractors__points li {
+display: grid; grid-template-columns: 1.5rem 1fr; gap: 0.75rem; align-items: baseline; color: var(--ink-soft);
+}
+#cs-site .contractors__points li::before {
+content: "—"; color: var(--bronze); font-family: var(--font-mono);
+}
+@media (min-width: 64em) {
+#cs-site .contractors__grid {
+grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 5rem; align-items: end;
+}
+}
+#cs-site .faq__layout {
+display: grid; gap: 2rem;
+}
+#cs-site .faq__list {
+border-top: 1px solid var(--line);
+}
+#cs-site .faq details {
+border-bottom: 1px solid var(--line);
+}
+#cs-site .faq summary {
+list-style: none; cursor: pointer;
+  display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center;
+  padding: 1.25rem 0;
+  font-family: var(--font-display); font-size: var(--step-1); font-weight: 350; letter-spacing: -0.01em; line-height: 1.25;
+}
+#cs-site .faq summary::-webkit-details-marker {
+display: none;
+}
+#cs-site .faq summary .plus {
+width: 1.4rem; height: 1.4rem; position: relative; flex: none;
+}
+#cs-site .faq summary .plus::before, #cs-site .faq summary .plus::after {
+content: ""; position: absolute; inset: 50% auto auto 50%; background: var(--bronze-deep);
+  width: 0.9rem; height: 1px; transform: translate(-50%, -50%);
+  transition: transform 0.35s var(--ease-out);
+}
+#cs-site .faq summary .plus::after {
+transform: translate(-50%, -50%) rotate(90deg);
+}
+#cs-site .faq details[open] summary .plus::after {
+transform: translate(-50%, -50%) rotate(0deg);
+}
+#cs-site .faq details[open] summary .plus::before {
+transform: translate(-50%, -50%) rotate(180deg);
+}
+#cs-site .faq__body {
+padding: 0 0 1.5rem; color: var(--ink-soft); max-width: 36rem; text-wrap: pretty;
+}
+#cs-site .faq details[open] .faq__body {
+animation: rise 0.5s var(--ease-out);
+}
+@media (min-width: 64em) {
+#cs-site .faq__layout {
+grid-template-columns: minmax(0, 24rem) 1fr; gap: 5rem; align-items: start;
+}
+#cs-site .faq__layout .section__head {
+margin-bottom: 0;
+}
+}
+#cs-site .contact__grid {
+display: grid; gap: 3rem;
+}
+#cs-site .contact__intro {
+display: grid; gap: 1.5rem; align-content: start;
+}
+#cs-site .contact__intro .section__head {
+margin-bottom: 0;
+}
+#cs-site .contact__direct {
+display: grid; gap: 1.25rem; border-top: 1px solid var(--line); padding-top: 1.5rem;
+}
+#cs-site .contact__direct a {
+text-decoration: none; display: grid; gap: 0.2rem;
+}
+#cs-site .contact__direct a .mono {
+color: var(--muted);
+}
+#cs-site .contact__direct a strong {
+font-weight: 500; font-size: var(--step-1); letter-spacing: -0.01em; transition: color 0.3s; word-break: break-word;
+}
+#cs-site .contact__direct a:hover strong {
+color: var(--bronze-deep);
+}
+#cs-site .form {
+display: grid; gap: 1.5rem; background: var(--white); border: 1px solid var(--line-strong); padding: clamp(1.25rem, 3vw, 2.25rem); position: relative;
+}
+#cs-site .form::before, #cs-site .form::after {
+content: ""; position: absolute; width: 9px; height: 9px; background: linear-gradient(var(--ink), var(--ink)) center / 1px 100% no-repeat, linear-gradient(var(--ink), var(--ink)) center / 100% 1px no-repeat; opacity: 0.7;
+}
+#cs-site .form::before {
+top: -5px; left: -5px;
+}
+#cs-site .form::after {
+bottom: -5px; right: -5px;
+}
+#cs-site .form label {
+display: block; color: var(--muted); margin-bottom: 0.5rem;
+}
+#cs-site .form label .req {
+color: var(--bronze-deep);
+}
+#cs-site .field {
+display: grid;
+}
+#cs-site .field input, #cs-site .field select, #cs-site .field textarea {
+width: 100%; font: inherit; color: var(--ink);
+  background: transparent; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0;
+  padding: 0.65rem 0; outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  -webkit-appearance: none; appearance: none;
+}
+#cs-site .field select {
+background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23101b33' stroke-width='1.25'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E") right 0 center / 1rem no-repeat;
+  padding-right: 1.5rem; cursor: pointer;
+}
+#cs-site .field textarea {
+resize: vertical; min-height: 7rem;
+}
+#cs-site .field input:focus, #cs-site .field select:focus, #cs-site .field textarea:focus {
+border-color: var(--bronze); box-shadow: 0 1px 0 0 var(--bronze);
+}
+#cs-site .field input:focus-visible, #cs-site .field select:focus-visible, #cs-site .field textarea:focus-visible {
+outline: none;
+}
+#cs-site .field input::placeholder, #cs-site .field textarea::placeholder {
+color: rgba(16, 27, 51, 0.38);
+}
+#cs-site .form__row {
+display: grid; gap: 1.5rem;
+}
+@media (min-width: 40em) {
+#cs-site .form__row {
+grid-template-columns: 1fr 1fr;
+}
+}
+#cs-site .seg {
+display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line-strong); border-radius: 2px; overflow: hidden;
+}
+#cs-site .seg label {
+position: relative; margin: 0; text-align: center; cursor: pointer;
+  padding: 0.85rem 0.75rem; color: var(--ink-soft);
+  transition: background-color 0.3s, color 0.3s;
+  font-family: var(--font-sans); text-transform: none; letter-spacing: 0; font-size: var(--step-0); font-weight: 500;
+}
+#cs-site .seg label + label {
+border-left: 1px solid var(--line-strong);
+}
+#cs-site .seg input {
+position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer;
+}
+#cs-site .seg label:has(input:checked) {
+background: var(--ink); color: var(--paper);
+}
+#cs-site .seg label:has(input:focus-visible) {
+outline: 2px solid var(--bronze); outline-offset: -2px;
+}
+#cs-site .seg .mono {
+display: block; font-size: 0.65rem; color: inherit; opacity: 0.7; margin-top: 0.2rem;
+}
+#cs-site fieldset {
+border: 0; padding: 0; margin: 0; min-width: 0;
+}
+#cs-site fieldset legend {
+padding: 0;
+}
+#cs-site .form__foot {
+display: grid; gap: 1rem; align-items: center;
+}
+#cs-site .form__note {
+color: var(--muted); text-transform: none; letter-spacing: 0.01em;
+}
+#cs-site .form__status {
+font-size: var(--step--1);
+}
+#cs-site .form__status:empty {
+display: none;
+}
+#cs-site .form__status.is-error {
+color: #9b2f22;
+}
+#cs-site .form__status.is-ok {
+color: var(--bronze-deep);
+}
+#cs-site .form.is-sending .btn {
+opacity: 0.6; pointer-events: none;
+}
+#cs-site .form__done {
+display: none; gap: 1rem; padding: 1rem 0;
+}
+#cs-site .form.is-done .form__done {
+display: grid;
+}
+#cs-site .form.is-done > :not(.form__done) {
+display: none;
+}
+#cs-site .form__done h3 {
+font-family: var(--font-display); font-size: var(--step-2); font-weight: 350; letter-spacing: -0.02em;
+}
+@media (min-width: 40em) {
+#cs-site .form__foot {
+grid-template-columns: auto 1fr; gap: 1.5rem;
+}
+}
+@media (min-width: 64em) {
+#cs-site .contact__grid {
+grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 5rem; align-items: start;
+}
+#cs-site .contact__intro {
+position: sticky; top: calc(var(--nav-h) + 2rem);
+}
+}
+#cs-site .footer {
+background: var(--ink); color: var(--paper); --line: var(--line-paper); --muted: rgba(244,239,230,0.6); padding-block: 3rem 2rem;
+}
+#cs-site .footer__block {
+display: grid; border: 1px solid var(--line-paper-strong);
+}
+#cs-site .footer__cell {
+padding: 1rem 1.15rem; border-bottom: 1px solid var(--line-paper-strong); display: grid; gap: 0.35rem; align-content: start;
+}
+#cs-site .footer__cell:last-child {
+border-bottom: 0;
+}
+#cs-site .footer__cell .k {
+color: var(--muted); font-size: 0.65rem;
+}
+#cs-site .footer__cell .v {
+font-family: var(--font-sans); text-transform: none; letter-spacing: 0; font-size: var(--step-0); font-weight: 400;
+}
+#cs-site .footer__cell a {
+text-decoration: none;
+}
+#cs-site .footer__cell a:hover {
+color: var(--bronze-light);
+}
+#cs-site .footer__cell--brand {
+gap: 0.75rem;
+}
+#cs-site .footer__cell--brand .brand {
+font-size: 1.1rem; font-family: var(--font-sans); text-transform: none; letter-spacing: -0.01em;
+}
+#cs-site .footer__cell--brand .brand__mark path, #cs-site .footer__cell--brand .brand__mark rect {
+stroke: var(--paper);
+}
+#cs-site .footer__links {
+display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-family: var(--font-sans); text-transform: none; letter-spacing: 0; font-size: var(--step--1); font-weight: 400;
+}
+#cs-site .footer__links a {
+text-decoration: none; color: var(--muted);
+}
+#cs-site .footer__links a:hover {
+color: var(--paper);
+}
+#cs-site .footer__legal {
+display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 2rem; padding-top: 1.25rem; color: var(--muted); font-size: 0.7rem;
+}
+@media (min-width: 48em) {
+#cs-site .footer__block {
+grid-template-columns: repeat(2, 1fr);
+}
+#cs-site .footer__cell {
+border-right: 1px solid var(--line-paper-strong);
+}
+#cs-site .footer__cell:nth-child(2n) {
+border-right: 0;
+}
+#cs-site .footer__cell:nth-last-child(-n+2) {
+border-bottom: 0;
+}
+}
+@media (min-width: 64em) {
+#cs-site .footer__block {
+grid-template-columns: 2fr 1fr 1fr 1.4fr 1.2fr;
+}
+#cs-site .footer__cell {
+border-bottom: 0; border-right: 1px solid var(--line-paper-strong);
+}
+#cs-site .footer__cell:nth-child(2n) {
+border-right: 1px solid var(--line-paper-strong);
+}
+#cs-site .footer__cell:last-child {
+border-right: 0;
+}
+}
+#cs-site .thanks {
+min-height: calc(100vh - var(--nav-h)); display: grid; align-items: center; padding-block: clamp(3rem, 8vw, 7rem);
+}
+#cs-site .thanks__inner {
+display: grid; gap: 2rem; max-width: 46rem;
+}
+#cs-site .thanks__title {
+font-size: var(--step-4);
+}
+#cs-site [data-reveal] {
+opacity: 0; transform: translateY(1.25rem); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); transition-delay: var(--d, 0s);
+}
+#cs-site [data-reveal].is-in {
+opacity: 1; transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+#cs-site *, #cs-site *::before, #cs-site *::after {
+animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important;
+}
+#cs-site [data-reveal] {
+opacity: 1; transform: none;
+}
+#cs-site .ticker__track {
+animation: none; flex-wrap: wrap; width: auto;
+}
+#cs-site .ticker__track > span:nth-child(2) {
+display: none;
+}
+#cs-site .dim .draw {
+stroke-dashoffset: 0;
+}
+#cs-site .dim text {
+opacity: 1;
+}
+#cs-site.is-loaded .hero__title .word, #cs-site.is-loaded .hero__copy > *, #cs-site.is-loaded .hero__sheet {
+animation: none;
+}
+}
+@media print {
+#cs-site .nav, #cs-site .menu, #cs-site .ticker, #cs-site .btn, #cs-site .form {
+display: none !important;
+}
+#cs-site::before {
+display: none;
+}
+}
+html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+#cs-site { position: relative; margin: 0; padding: 0; text-align: left; }
+#cs-site h1, #cs-site h2, #cs-site h3, #cs-site h4, #cs-site p, #cs-site li, #cs-site dd, #cs-site dt { color: inherit; }
+#cs-site h1, #cs-site h2, #cs-site h3, #cs-site h4 { font-weight: 400; line-height: 1.1; text-transform: none; }
+#cs-site input, #cs-site select, #cs-site textarea, #cs-site button { margin: 0; box-shadow: none; }
+#cs-site a:not(.btn):hover { text-decoration: none; }
+
+</style>
+
+<div id="cs-site">
+<header class="nav" data-nav>
+  <div class="wrap nav__inner">
+    <a class="brand" href="#top" aria-label="Contractors Scaled, home">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect x="2.5" y="2.5" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path class="m-bronze" d="M11 21.5V10.5h11" fill="none" stroke="#a9743b" stroke-width="2"/>
+        <circle cx="21.5" cy="21.5" r="2.2" fill="#a9743b"/>
+      </svg>
+      <span class="brand__name">Contractors Scaled</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#work">What we build</a>
+      <a href="#process">How it works</a>
+      <a href="#why">Why us</a>
+      <a href="#contractors">For contractors</a>
+    </nav>
+
+    <div class="nav__cta">
+      <a class="nav__phone" href="tel:+13529524761">(352) 952-4761</a>
+      <a class="btn" href="#contact">Plan my remodel
+        <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+      <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span data-menu-label>Menu</span>
+    </button>
+  </div>
+
+  <div class="menu" id="menu" data-menu>
+    <nav class="menu__links" aria-label="Mobile">
+      <a href="#work">What we build <span class="mono">01</span></a>
+      <a href="#process">How it works <span class="mono">02</span></a>
+      <a href="#why">Why us <span class="mono">03</span></a>
+      <a href="#contractors">For contractors <span class="mono">04</span></a>
+      <a href="#contact">Start a project <span class="mono">05</span></a>
+    </nav>
+    <div class="menu__foot">
+      <a class="hero__call" href="tel:+13529524761"><span class="mono">Call</span><strong>(352) 952-4761</strong></a>
+      <a class="hero__call" href="mailto:joseph@contractorscaled.com"><span class="mono">Email</span><strong>joseph@contractorscaled.com</strong></a>
+      <a class="btn btn--lg" href="#contact">Plan my remodel</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">Design &amp; build · Nationwide</p>
+        <h1 class="hero__title" id="hero-title">
+          <span class="word">Plan.<sup>scope</sup></span>
+          <span class="word">Price.<sup>one proposal</sup></span>
+          <span class="word">Build.<sup>local crew</sup></span>
+        </h1>
+        <p class="lede">One team takes your kitchen, bathroom, basement, or pool from the first conversation to the final walkthrough. A scope you can read, one price for the whole project, and one person who picks up the phone.</p>
+        <div class="hero__actions">
+          <a class="btn btn--lg" href="#contact">Plan my remodel
+            <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="hero__call" href="tel:+13529524761"><span class="mono">Or call</span><strong>(352) 952-4761</strong></a>
+        </div>
+        <svg class="dim" viewBox="-6 0 412 44" aria-hidden="true" focusable="false">
+          <text x="200" y="12" text-anchor="middle">One team · first call to final walkthrough</text>
+          <line class="draw" x1="0" y1="30" x2="400" y2="30"/>
+          <line x1="0.5" y1="20" x2="0.5" y2="40"/>
+          <line x1="399.5" y1="20" x2="399.5" y2="40"/>
+          <line x1="-4" y1="34" x2="5" y2="26"/>
+          <line x1="395" y1="34" x2="404" y2="26"/>
+        </svg>
+      </div>
+
+      <figure class="sheet hero__sheet">
+        <span class="reg" aria-hidden="true"></span>
+        <div class="sheet__img" data-label="Kitchen">
+          <img src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__7/image-5175b27e-4933-4d7a-9b6e-8d64f882ee42.png?Expires=2105012100&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=d~jsP77kgcajAplFNVwcLvt07cw0p-XEfFJxRX4bSvibm8IUNehk3mnwQ7skNxNae2mMC7wWjduqGvsPXZm52CavEXB8n~VN-MrYA0tHF4JVpdK2EB8fS0tgvMsAQe06V-EOdcLfOJFJ2sCy5FpUeDsVGKXXFnJXCM03KpWf1SetqTg6ka6XRiz8bfkF1OiB2FJBmBEOxi-QneJHU-FyozEdtIoMNGUBiexw4Ahpeb~tLolLDL0HFJya-4-xS~muOFDOTNmUasdFw-g1g54enX09kNxdknkMCgqTaKp5Ye4vwkB5wbSEbwiecxqbJ~AdordBpHiOh0SHfovDFA-2Hw__" alt="A finished kitchen remodel with new cabinetry, counters, and lighting" width="1200" height="1500" fetchpriority="high" decoding="async" data-parallax>
+        </div>
+        <figcaption class="sheet__block">
+          <span>Sheet A-101</span>
+          <span>Kitchen · Full remodel</span>
+          <span>Drawn for: you</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================ TICKER ============================ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span>Kitchens <i></i> Bathrooms <i></i> Basements <i></i> Pools <i></i> Homeowners across the US <i></i> Vetted, licensed local crews <i></i> One point of contact <i></i> One price for the whole project <i></i></span>
+      <span>Kitchens <i></i> Bathrooms <i></i> Basements <i></i> Pools <i></i> Homeowners across the US <i></i> Vetted, licensed local crews <i></i> One point of contact <i></i> One price for the whole project <i></i></span>
+    </div>
+  </div>
+  <p class="sr-only">Kitchens, bathrooms, basements, and pools. Homeowners across the US. Vetted, licensed local crews. One point of contact. One price for the whole project.</p>
+
+  <!-- ============================ WORK ============================ -->
+  <section class="section work" id="work" aria-labelledby="work-title">
+    <div class="wrap">
+      <header class="section__head" data-reveal>
+        <p class="section__index">01 / What we build</p>
+        <h2 class="section__title" id="work-title">Full remodels. The rooms that <em>change how a home lives.</em></h2>
+        <p class="body">We take on the big four and take them all the way. Each one planned, priced, and built by the same team, so nothing gets lost between the drawing and the drywall.</p>
+      </header>
+
+      <div class="work__layout">
+        <div class="work__stage" aria-hidden="true">
+          <figure class="sheet">
+            <span class="reg"></span>
+            <div class="sheet__img">
+              <div class="stack" data-stage>
+                <img data-panel="kitchen" class="is-shown" src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__7/image-5175b27e-4933-4d7a-9b6e-8d64f882ee42.png?Expires=2105012100&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=d~jsP77kgcajAplFNVwcLvt07cw0p-XEfFJxRX4bSvibm8IUNehk3mnwQ7skNxNae2mMC7wWjduqGvsPXZm52CavEXB8n~VN-MrYA0tHF4JVpdK2EB8fS0tgvMsAQe06V-EOdcLfOJFJ2sCy5FpUeDsVGKXXFnJXCM03KpWf1SetqTg6ka6XRiz8bfkF1OiB2FJBmBEOxi-QneJHU-FyozEdtIoMNGUBiexw4Ahpeb~tLolLDL0HFJya-4-xS~muOFDOTNmUasdFw-g1g54enX09kNxdknkMCgqTaKp5Ye4vwkB5wbSEbwiecxqbJ~AdordBpHiOh0SHfovDFA-2Hw__" alt="" width="1200" height="1500" loading="lazy" decoding="async">
+                <img data-panel="bathroom" src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__2/image-ab62ec0c-1e04-461b-b624-edb84151cb0a.png?Expires=2105012108&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=nSeCVm3vfvmrZBg7tHZ3H-IltX3ImOxyA9~nkUw3a74oMjKcPGvpfkeK52qtSCo7FKPQhKDhNfl3PQWVcwuXIYjc6EPZFvgAYV8jR04cYaT9X-TIXw0UZZK3OF94x3-msfAXIm9caTLpr6A8HcfyPYxPkWe3r7S4xcyAyIZqL~wCwl2yk49jXxR5GNDxaa6jLvgp1NWRLrvPpFJar5X4Xx-yaJmAiWNSTmFpNJNSwPRQYctwDoBFIX7PSmgH2ttL2Pj1-EarXNzRnpiSCzBfWyf0E1C7VQ3taJRNGVB4AYEDEzTHUEiSpBIsZfCXusIz4Bz-FAJYLgKsPvXwwfci9g__" alt="" width="1200" height="1500" loading="lazy" decoding="async">
+                <img data-panel="basement" src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__2/image-d373d276-20d1-4541-9841-8af5eddbfae8.png?Expires=2105012115&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=inHyy-SoaXzJf4M-2U-LOVmvHwT1SWtdOtXzLPXAZ-eZ-riFI5KpbF0T3R758iilVwrMvMVPFncmWwCJm1UUh6rwW9hnkHt8dmoxmAmHQPKVCXORP03Kc0h9CpF2p7z~Er0SLhQl6-Lvq1dgrQ~7WxA2mAT37dCw88zM11L-d3ZA1Rgx~-uJhRM0uSlRkG5awiEG2RZgNKpY1Oj8x3G5un79QnE2C8oI594WWN1HiShOX6enxphFhgeLJ9ETTFBksYCLC~vJ9LwCMQRdktsKy~HeAjtKPKgBJTNwew1~5OyDUeEpl5AWOnJnvJXEo25ynjZ-ZN3wuN4emCbJuu6H-Q__" alt="" width="1200" height="1500" loading="lazy" decoding="async">
+                <img data-panel="pool" src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__5/image-1b12ae3e-9e2c-46a5-9b1c-3087b8176960.png?Expires=2105012116&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=GAmzhnjaHLjs9r8Gid7bnkEnYQt3fo~eTrBo8ObwqZVSNxlQXHeo4q5UJN173rxPdwjxOwc1pDl2bGBQHPCcOOhUndJ2CplswFk5qnAYX90H5wS9G1JrGAbHLis9Le4gAghlE-15Do8WMU-MobLHDp-EAL4Rh370PAU0AJPSIJUl1wj2sGvqN3Dth8hsrMZIvJTwa68Ut~AhbKT9ciAIExVVn7RSaNifCI2KHZGeW0NeefsjSEEo01Kn-81Gqpe1NpVAMyR0Ychp4E6LTcuQhi-o5-a94fPTuVKSoB6ORFpmuZs4gtMhRxnV~pO9OK4T4f71hwJdDB-9NSs7BAQW-w__" alt="" width="1200" height="1500" loading="lazy" decoding="async">
+              </div>
+            </div>
+            <figcaption class="sheet__block">
+              <span data-stage-code>Sheet A-101</span>
+              <span data-stage-label>Kitchen · Full remodel</span>
+              <span>Scale: as built</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <ol class="work__list" data-work-list>
+          <li class="work__item is-active" data-key="kitchen" data-code="Sheet A-101" data-label="Kitchen · Full remodel" data-reveal>
+            <a class="work__link" href="#contact" data-project="Kitchen">
+              <div class="work__row">
+                <span class="work__code">A-101</span>
+                <h3 class="work__title">Kitchens</h3>
+                <svg class="work__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </div>
+              <p class="work__body">Layouts that work the way you cook, cabinetry fitted to the wall, and finishes chosen once, not three times. Plumbing, electrical, and lighting handled inside the same scope.</p>
+              <figure class="work__thumb sheet__img" data-label="Kitchen">
+                <img src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__7/image-5175b27e-4933-4d7a-9b6e-8d64f882ee42.png?Expires=2105012100&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=d~jsP77kgcajAplFNVwcLvt07cw0p-XEfFJxRX4bSvibm8IUNehk3mnwQ7skNxNae2mMC7wWjduqGvsPXZm52CavEXB8n~VN-MrYA0tHF4JVpdK2EB8fS0tgvMsAQe06V-EOdcLfOJFJ2sCy5FpUeDsVGKXXFnJXCM03KpWf1SetqTg6ka6XRiz8bfkF1OiB2FJBmBEOxi-QneJHU-FyozEdtIoMNGUBiexw4Ahpeb~tLolLDL0HFJya-4-xS~muOFDOTNmUasdFw-g1g54enX09kNxdknkMCgqTaKp5Ye4vwkB5wbSEbwiecxqbJ~AdordBpHiOh0SHfovDFA-2Hw__" alt="A finished kitchen remodel" width="1200" height="750" loading="lazy" decoding="async">
+              </figure>
+            </a>
+          </li>
+          <li class="work__item" data-key="bathroom" data-code="Sheet A-102" data-label="Bathroom · Full remodel" data-reveal style="--d:.08s">
+            <a class="work__link" href="#contact" data-project="Bathroom">
+              <div class="work__row">
+                <span class="work__code">A-102</span>
+                <h3 class="work__title">Bathrooms</h3>
+                <svg class="work__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </div>
+              <p class="work__body">Primary baths, hall baths, and the ones that haven't been touched since the house was built. Tile, waterproofing, fixtures, ventilation, and storage, all planned together.</p>
+              <figure class="work__thumb sheet__img" data-label="Bathroom">
+                <img src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__2/image-ab62ec0c-1e04-461b-b624-edb84151cb0a.png?Expires=2105012108&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=nSeCVm3vfvmrZBg7tHZ3H-IltX3ImOxyA9~nkUw3a74oMjKcPGvpfkeK52qtSCo7FKPQhKDhNfl3PQWVcwuXIYjc6EPZFvgAYV8jR04cYaT9X-TIXw0UZZK3OF94x3-msfAXIm9caTLpr6A8HcfyPYxPkWe3r7S4xcyAyIZqL~wCwl2yk49jXxR5GNDxaa6jLvgp1NWRLrvPpFJar5X4Xx-yaJmAiWNSTmFpNJNSwPRQYctwDoBFIX7PSmgH2ttL2Pj1-EarXNzRnpiSCzBfWyf0E1C7VQ3taJRNGVB4AYEDEzTHUEiSpBIsZfCXusIz4Bz-FAJYLgKsPvXwwfci9g__" alt="A finished bathroom remodel" width="1200" height="750" loading="lazy" decoding="async">
+              </figure>
+            </a>
+          </li>
+          <li class="work__item" data-key="basement" data-code="Sheet A-103" data-label="Basement · Finished space" data-reveal style="--d:.16s">
+            <a class="work__link" href="#contact" data-project="Basement">
+              <div class="work__row">
+                <span class="work__code">A-103</span>
+                <h3 class="work__title">Basements</h3>
+                <svg class="work__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </div>
+              <p class="work__body">Square footage you already own, finished into space you'll actually use. Family rooms, guest suites, home offices, and gyms, with moisture, egress, and mechanicals sorted first.</p>
+              <figure class="work__thumb sheet__img" data-label="Basement">
+                <img src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__2/image-d373d276-20d1-4541-9841-8af5eddbfae8.png?Expires=2105012115&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=inHyy-SoaXzJf4M-2U-LOVmvHwT1SWtdOtXzLPXAZ-eZ-riFI5KpbF0T3R758iilVwrMvMVPFncmWwCJm1UUh6rwW9hnkHt8dmoxmAmHQPKVCXORP03Kc0h9CpF2p7z~Er0SLhQl6-Lvq1dgrQ~7WxA2mAT37dCw88zM11L-d3ZA1Rgx~-uJhRM0uSlRkG5awiEG2RZgNKpY1Oj8x3G5un79QnE2C8oI594WWN1HiShOX6enxphFhgeLJ9ETTFBksYCLC~vJ9LwCMQRdktsKy~HeAjtKPKgBJTNwew1~5OyDUeEpl5AWOnJnvJXEo25ynjZ-ZN3wuN4emCbJuu6H-Q__" alt="A finished basement living space" width="1200" height="750" loading="lazy" decoding="async">
+              </figure>
+            </a>
+          </li>
+          <li class="work__item" data-key="pool" data-code="Sheet A-104" data-label="Pool · Design &amp; build" data-reveal style="--d:.24s">
+            <a class="work__link" href="#contact" data-project="Pool">
+              <div class="work__row">
+                <span class="work__code">A-104</span>
+                <h3 class="work__title">Pools</h3>
+                <svg class="work__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg>
+              </div>
+              <p class="work__body">In-ground pools designed for the yard you have, with decking, equipment, and the outdoor living around it planned as one project instead of four.</p>
+              <figure class="work__thumb sheet__img" data-label="Pool">
+                <img src="https://cms-toolkit-artifacts.artlist.io/content/-t-e-x-t_-t-o_-i-m-a-g-e-v1/media__5/image-1b12ae3e-9e2c-46a5-9b1c-3087b8176960.png?Expires=2105012116&amp;Key-Pair-Id=K2ZDLYDZI2R1DF&amp;Signature=GAmzhnjaHLjs9r8Gid7bnkEnYQt3fo~eTrBo8ObwqZVSNxlQXHeo4q5UJN173rxPdwjxOwc1pDl2bGBQHPCcOOhUndJ2CplswFk5qnAYX90H5wS9G1JrGAbHLis9Le4gAghlE-15Do8WMU-MobLHDp-EAL4Rh370PAU0AJPSIJUl1wj2sGvqN3Dth8hsrMZIvJTwa68Ut~AhbKT9ciAIExVVn7RSaNifCI2KHZGeW0NeefsjSEEo01Kn-81Gqpe1NpVAMyR0Ychp4E6LTcuQhi-o5-a94fPTuVKSoB6ORFpmuZs4gtMhRxnV~pO9OK4T4f71hwJdDB-9NSs7BAQW-w__" alt="A newly built backyard pool" width="1200" height="750" loading="lazy" decoding="async">
+              </figure>
+            </a>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ STATEMENT ============================ -->
+  <section class="section section--tight statement" aria-label="Our promise">
+    <div class="wrap">
+      <p class="statement__text" data-reveal data-statement>A remodel should feel like <span class="hl">one decision</span> you made, not a hundred you keep making.</p>
+      <p class="statement__aside body" data-reveal style="--d:.15s">That is the whole reason we exist. One scope, one price, one person. You decide what you want the room to be. We handle everything between that and the day it's done.</p>
+    </div>
+  </section>
+
+  <!-- ============================ PROCESS ============================ -->
+  <section class="section process is-blue" id="process" aria-labelledby="process-title">
+    <div class="wrap">
+      <header class="section__head" data-reveal>
+        <p class="section__index">02 / How it works</p>
+        <h2 class="section__title" id="process-title">Three steps. <em>One point of contact.</em></h2>
+        <p class="body">You will know what is happening, what it costs, and who is doing it, at every stage.</p>
+      </header>
+
+      <ol class="steps" data-steps>
+        <li class="step" data-reveal>
+          <span class="step__num">Step 01</span>
+          <h3 class="step__title">Plan <small>Scope &amp; design</small></h3>
+          <p class="step__body">It starts with a call, then a visit to your home. We measure, listen, and turn what you want into a written scope you can actually read, down to the fixtures and finishes.</p>
+        </li>
+        <li class="step" data-reveal style="--d:.15s">
+          <span class="step__num">Step 02</span>
+          <h3 class="step__title">Price <small>One proposal</small></h3>
+          <p class="step__body">You get one proposal that covers the whole project, priced before any work begins. If something needs to change along the way, you hear it from us first, in writing.</p>
+        </li>
+        <li class="step" data-reveal style="--d:.3s">
+          <span class="step__num">Step 03</span>
+          <h3 class="step__title">Build <small>Vetted local crew</small></h3>
+          <p class="step__body">A vetted, licensed crew local to you builds it. You keep talking to the same person the entire time, from the first call to the final walkthrough.</p>
+        </li>
+      </ol>
+
+      <div class="process__foot" data-reveal>
+        <p class="body">Every project starts the same way: a short conversation about the room, then an in-home visit.</p>
+        <a class="btn btn--paper" href="#contact">Start with a call
+          <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ WHY ============================ -->
+  <section class="section why" id="why" aria-labelledby="why-title">
+    <div class="wrap why__layout">
+      <header class="section__head" data-reveal>
+        <p class="section__index">03 / Why homeowners choose us</p>
+        <h2 class="section__title" id="why-title">Written like a spec sheet, <em>because it is one.</em></h2>
+        <p class="body">No vague promises. This is what you get, line by line.</p>
+      </header>
+
+      <dl class="spec" data-reveal>
+        <div>
+          <dt>Coverage</dt>
+          <dd>Homeowners across the United States.<small>Wherever the house is, we plan it, price it, and build it with a crew from your area.</small></dd>
+        </div>
+        <div>
+          <dt>Crews</dt>
+          <dd>Vetted, licensed, and local.<small>Every crew is checked before it sets foot in your home, and licensed where the work is being done.</small></dd>
+        </div>
+        <div>
+          <dt>Contact</dt>
+          <dd>One person, start to finish.<small>Not a rotating cast. One name and one number for the whole project.</small></dd>
+        </div>
+        <div>
+          <dt>Scope</dt>
+          <dd>Full remodels only.<small>Kitchens, bathrooms, basements, and pools. We do the whole room, not a piece of it.</small></dd>
+        </div>
+        <div>
+          <dt>Pricing</dt>
+          <dd>The whole project in one proposal.<small>Priced before work begins, with changes put in writing before they happen.</small></dd>
+        </div>
+        <div>
+          <dt>Start</dt>
+          <dd>A call, then a visit.<small>Send a few details below. We'll call to set up the in-home visit.</small></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============================ CONTRACTORS ============================ -->
+  <section class="section contractors" id="contractors" aria-labelledby="contractors-title">
+    <div class="wrap contractors__grid">
+      <header class="section__head" data-reveal>
+        <p class="section__index">04 / For contractors</p>
+        <h2 class="section__title" id="contractors-title">We sell the projects. <em>You build them.</em></h2>
+        <p class="body">We book in-home estimates with homeowners who are ready to remodel and hand them to you. You do the work you're best at, and you keep the majority of the contract.</p>
+      </header>
+      <div class="contractors__aside" data-reveal style="--d:.12s">
+        <ul class="contractors__points">
+          <li>Booked in-home estimates, ready for you.</li>
+          <li>Full remodels: kitchens, bathrooms, basements, pools.</li>
+          <li>You keep the majority of the contract.</li>
+        </ul>
+        <div>
+          <a class="btn btn--ghost" href="#contact" data-role="Contractor">Talk to us about building
+            <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FAQ ============================ -->
+  <section class="section faq" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq__layout">
+      <header class="section__head" data-reveal>
+        <p class="section__index">05 / Good questions</p>
+        <h2 class="section__title" id="faq-title">Things people ask <em>before they call.</em></h2>
+      </header>
+      <div class="faq__list" data-reveal>
+        <details>
+          <summary>Where do you work?<span class="plus" aria-hidden="true"></span></summary>
+          <p class="faq__body">Across the US. We plan and price the project, then build it with a vetted, licensed crew local to your home.</p>
+        </details>
+        <details>
+          <summary>Who is actually doing the work in my house?<span class="plus" aria-hidden="true"></span></summary>
+          <p class="faq__body">A local crew we have vetted and that is licensed where the work is being done. We manage them, and you deal with one point of contact throughout.</p>
+        </details>
+        <details>
+          <summary>What kinds of projects do you take on?<span class="plus" aria-hidden="true"></span></summary>
+          <p class="faq__body">Full remodels: kitchens, bathrooms, basements, and pools. If you're looking for a small repair or a single fixture swap, we're probably not the right fit.</p>
+        </details>
+        <details>
+          <summary>How does pricing work?<span class="plus" aria-hidden="true"></span></summary>
+          <p class="faq__body">After the in-home visit you get one proposal covering the full scope. If anything needs to change during the build, you'll see it in writing before it happens.</p>
+        </details>
+        <details>
+          <summary>What's the first step?<span class="plus" aria-hidden="true"></span></summary>
+          <p class="faq__body">Send a few details through the form below or call <a href="tel:+13529524761">(352) 952-4761</a>. We'll talk through the room and set up a visit.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ CONTACT ============================ -->
+  <section class="section contact" id="contact" aria-labelledby="contact-title">
+    <div class="wrap contact__grid">
+      <div class="contact__intro" data-reveal>
+        <header class="section__head">
+          <p class="section__index">06 / Start</p>
+          <h2 class="section__title" id="contact-title">Tell us about <em>the room.</em></h2>
+          <p class="body">A few details is all we need. We'll call to talk it through and set up the in-home visit. Prefer to skip the form?</p>
+        </header>
+        <address class="contact__direct">
+          <a href="tel:+13529524761"><span class="mono">Call</span><strong>(352) 952-4761</strong></a>
+          <a href="mailto:joseph@contractorscaled.com"><span class="mono">Email</span><strong>joseph@contractorscaled.com</strong></a>
+        </address>
+      </div>
+
+      <form class="form" action="https://formsubmit.co/joseph@contractorscaled.com" method="POST" data-form data-reveal style="--d:.1s">
+        <input type="hidden" name="_subject" value="New inquiry from contractorscaled.com">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
+
+        <fieldset class="field">
+          <legend><label>I am a <span class="req" aria-hidden="true">*</span></label></legend>
+          <div class="seg" data-role-group>
+            <label>
+              <input type="radio" name="I am a" value="Homeowner" checked required>
+              Homeowner
+              <span class="mono">Planning a remodel</span>
+            </label>
+            <label>
+              <input type="radio" name="I am a" value="Contractor" required>
+              Contractor
+              <span class="mono">Looking to build</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="form__row">
+          <div class="field">
+            <label for="f-name">Name <span class="req" aria-hidden="true">*</span></label>
+            <input id="f-name" name="Name" type="text" autocomplete="name" required placeholder="Your name">
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone <span class="req" aria-hidden="true">*</span></label>
+            <input id="f-phone" name="Phone" type="tel" autocomplete="tel" required placeholder="(555) 555-5555">
+          </div>
+        </div>
+
+        <div class="form__row">
+          <div class="field">
+            <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
+            <input id="f-email" name="Email" type="email" autocomplete="email" required placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="f-location" data-homeowner="City &amp; state" data-contractor="Where you work">City &amp; state</label>
+            <input id="f-location" name="Location" type="text" autocomplete="address-level2" placeholder="e.g. Tampa, FL">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-project" data-homeowner="Project type" data-contractor="What you build">Project type</label>
+          <select id="f-project" name="Project type" data-project-select>
+            <option value="" selected>Choose one</option>
+            <option value="Kitchen">Kitchen</option>
+            <option value="Bathroom">Bathroom</option>
+            <option value="Basement">Basement</option>
+            <option value="Pool">Pool</option>
+            <option value="More than one">More than one</option>
+            <option value="Something else">Something else</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-message" data-homeowner="Tell us about the project" data-contractor="Tell us about your company">Tell us about the project</label>
+          <textarea id="f-message" name="Message" rows="4" placeholder="What the room is now, what you'd like it to be, and any timing you have in mind."></textarea>
+        </div>
+
+        <div class="form__foot">
+          <button class="btn btn--lg" type="submit">Send my details
+            <svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="form__note">Goes straight to our inbox. A real person calls you back.</p>
+        </div>
+        <p class="form__status" role="status" aria-live="polite" data-status></p>
+
+        <div class="form__done">
+          <p class="eyebrow">Received</p>
+          <h3>Got it. We'll be in touch soon.</h3>
+          <p class="body">If it's easier to talk now, call <a href="tel:+13529524761">(352) 952-4761</a>.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__block">
+      <div class="footer__cell footer__cell--brand">
+        <a class="brand" href="#top" aria-label="Contractors Scaled, back to top">
+          <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+            <rect x="2.5" y="2.5" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path class="m-bronze" d="M11 21.5V10.5h11" fill="none" stroke="#c9954f" stroke-width="2"/>
+            <circle cx="21.5" cy="21.5" r="2.2" fill="#c9954f"/>
+          </svg>
+          <span class="brand__name">Contractors Scaled</span>
+        </a>
+        <span class="v">Design &amp; build remodeling. We plan, price, and build full remodels for homeowners across the US.</span>
+      </div>
+      <div class="footer__cell">
+        <span class="k">Call</span>
+        <a class="v" href="tel:+13529524761">(352) 952-4761</a>
+      </div>
+      <div class="footer__cell">
+        <span class="k">Email</span>
+        <a class="v" href="mailto:joseph@contractorscaled.com">joseph@contractorscaled.com</a>
+      </div>
+      <div class="footer__cell">
+        <span class="k">Index</span>
+        <nav class="footer__links" aria-label="Footer">
+          <a href="#work">What we build</a>
+          <a href="#process">How it works</a>
+          <a href="#why">Why us</a>
+          <a href="#contractors">For contractors</a>
+          <a href="#faq">Questions</a>
+          <a href="#contact">Start</a>
+        </nav>
+      </div>
+      <div class="footer__cell">
+        <span class="k">Title block</span>
+        <span class="v">Contractors Scaled LLC</span>
+        <span class="k">Sheet A-000 · Rev. <span data-year>2026</span></span>
+      </div>
+    </div>
+    <div class="footer__legal">
+      <span>© <span data-year>2026</span> Contractors Scaled LLC. All rights reserved.</span>
+      <span>Kitchens · Bathrooms · Basements · Pools</span>
+    </div>
+  </div>
+</footer>
+</div>
+
+<script>
+/* Contractors Scaled — site behaviour. Plain JS, no dependencies.
+   Everything here is progressive enhancement: the page reads and the form posts without it. */
+(function () {
+  'use strict';
+  function init() {
+
+  var root = document.getElementById('cs-site');
+  if (!root) return;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var desktop = window.matchMedia('(min-width: 64em)');
+
+  /* ---------- Load-in ---------- */
+  function markLoaded() { root.classList.add('is-loaded'); }
+  if (document.fonts && document.fonts.ready) {
+    var done = false;
+    var finish = function () { if (!done) { done = true; markLoaded(); } };
+    document.fonts.ready.then(finish);
+    setTimeout(finish, 900); /* never wait on a slow font */
+  } else { markLoaded(); }
+
+  /* ---------- Year ---------- */
+  var y = String(new Date().getFullYear());
+  root.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = y; });
+
+  /* ---------- Nav state ---------- */
+  var nav = root.querySelector('[data-nav]');
+  var lastScrolled = null;
+  function onScrollNav() {
+    var s = window.scrollY > 12;
+    if (s !== lastScrolled) { nav.classList.toggle('is-scrolled', s); lastScrolled = s; }
+  }
+  if (nav) { onScrollNav(); window.addEventListener('scroll', onScrollNav, { passive: true }); }
+
+  /* ---------- Mobile menu ---------- */
+  var toggle = root.querySelector('[data-menu-toggle]');
+  var menu = root.querySelector('[data-menu]');
+  var menuLabel = root.querySelector('[data-menu-label]');
+  function setMenu(open) {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    menu.classList.toggle('is-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (menuLabel) menuLabel.textContent = open ? 'Close' : 'Menu';
+    if (open) { var first = menu.querySelector('a'); if (first) first.focus({ preventScroll: true }); }
+  }
+  if (toggle && menu) {
+    toggle.addEventListener('click', function () { setMenu(toggle.getAttribute('aria-expanded') !== 'true'); });
+    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.classList.contains('is-open')) { setMenu(false); toggle.focus(); }
+    });
+    desktop.addEventListener('change', function (e) { if (e.matches) setMenu(false); });
+  }
+
+  /* ---------- Scroll reveal ---------- */
+  var revealEls = root.querySelectorAll('[data-reveal]');
+  if ('IntersectionObserver' in window && !reduceMotion.matches) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-in'); });
+  }
+
+  /* ---------- Statement underline + process line ---------- */
+  function watch(selector, cls) {
+    var el = root.querySelector(selector);
+    if (!el) return;
+    if (!('IntersectionObserver' in window) || reduceMotion.matches) { el.classList.add(cls); return; }
+    var o = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { el.classList.add(cls); o.disconnect(); } });
+    }, { threshold: 0.4 });
+    o.observe(el);
+  }
+  watch('[data-statement]', 'is-in');
+  watch('[data-steps]', 'is-in');
+
+  /* ---------- Work: sticky stage follows the list ---------- */
+  var stage = root.querySelector('[data-stage]');
+  var list = root.querySelector('[data-work-list]');
+  var stageCode = root.querySelector('[data-stage-code]');
+  var stageLabel = root.querySelector('[data-stage-label]');
+  if (stage && list) {
+    var items = Array.prototype.slice.call(list.querySelectorAll('.work__item'));
+    var current = 'kitchen';
+    var hoverUntil = 0;
+    function show(key) {
+      if (key === current) return;
+      current = key;
+      items.forEach(function (li) { li.classList.toggle('is-active', li.getAttribute('data-key') === key); });
+      Array.prototype.forEach.call(stage.querySelectorAll('[data-panel]'), function (p) {
+        p.classList.toggle('is-shown', p.getAttribute('data-panel') === key);
+      });
+      var li = items.filter(function (l) { return l.getAttribute('data-key') === key; })[0];
+      if (li) {
+        if (stageCode) stageCode.textContent = li.getAttribute('data-code');
+        if (stageLabel) stageLabel.textContent = li.getAttribute('data-label');
+      }
+    }
+    items.forEach(function (li) {
+      li.addEventListener('mouseenter', function () { if (desktop.matches) { hoverUntil = Date.now() + 1200; show(li.getAttribute('data-key')); } });
+      li.addEventListener('focusin', function () { if (desktop.matches) show(li.getAttribute('data-key')); });
+    });
+    if ('IntersectionObserver' in window) {
+      var wo = new IntersectionObserver(function (entries) {
+        if (!desktop.matches || Date.now() < hoverUntil) return;
+        var best = null;
+        entries.forEach(function (en) { if (en.isIntersecting && (!best || en.intersectionRatio > best.intersectionRatio)) best = en; });
+        if (best) show(best.target.getAttribute('data-key'));
+      }, { rootMargin: '-40% 0px -40% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
+      items.forEach(function (li) { wo.observe(li); });
+    }
+  }
+
+  /* ---------- Hero parallax (desktop, motion allowed) ---------- */
+  var par = root.querySelector('[data-parallax]');
+  if (par && !reduceMotion.matches) {
+    var ticking = false;
+    function move() {
+      ticking = false;
+      if (!desktop.matches) { par.style.transform = ''; return; }
+      var r = par.getBoundingClientRect();
+      var vh = window.innerHeight || 1;
+      var p = (r.top + r.height / 2 - vh / 2) / vh; /* -0.5..0.5 around centre */
+      par.style.transform = 'scale(1.08) translateY(' + (p * -18).toFixed(2) + 'px)';
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(move); } }, { passive: true });
+    move();
+  }
+
+  /* ---------- Prefill from CTAs ---------- */
+  var form = root.querySelector('[data-form]');
+  var projectSelect = root.querySelector('[data-project-select]');
+  function setRole(value) {
+    var r = form && form.querySelector('input[name="I am a"][value="' + value + '"]');
+    if (r) { r.checked = true; r.dispatchEvent(new Event('change', { bubbles: true })); }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-project], [data-role]');
+    if (!a || !form) return;
+    if (a.hasAttribute('data-project') && projectSelect) { setRole('Homeowner'); projectSelect.value = a.getAttribute('data-project'); }
+    if (a.hasAttribute('data-role')) setRole(a.getAttribute('data-role'));
+  });
+
+  /* ---------- Form: role-aware labels, AJAX submit with native fallback ---------- */
+  if (form) {
+    var status = form.querySelector('[data-status]');
+
+    function applyRole() {
+      var checked = form.querySelector('input[name="I am a"]:checked');
+      var role = checked ? checked.value.toLowerCase() : 'homeowner';
+      form.querySelectorAll('[data-homeowner]').forEach(function (label) {
+        var t = label.getAttribute('data-' + role);
+        if (t) label.textContent = t;
+      });
+      var msg = form.querySelector('#f-message');
+      if (msg) {
+        msg.placeholder = role === 'contractor'
+          ? 'Trades you cover, the area you work in, and how long you\'ve been building.'
+          : 'What the room is now, what you\'d like it to be, and any timing you have in mind.';
+      }
+      var loc = form.querySelector('#f-location');
+      if (loc) loc.placeholder = role === 'contractor' ? 'e.g. Tampa metro' : 'e.g. Tampa, FL';
+    }
+    form.addEventListener('change', function (e) { if (e.target.name === 'I am a') applyRole(); });
+    applyRole();
+
+    function onSubmit(e) {
+      if (!window.fetch || !window.FormData) return; /* native POST */
+      if (!form.checkValidity()) return;            /* browser shows its own messages */
+      var honey = form.querySelector('input[name="_honey"]');
+      if (honey && honey.value) { e.preventDefault(); return; }
+      e.preventDefault();
+      form.classList.add('is-sending');
+      if (status) { status.className = 'form__status'; status.textContent = 'Sending…'; }
+      var data = new FormData(form);
+      data.delete('_captcha');
+      fetch('https://formsubmit.co/ajax/joseph@contractorscaled.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: data
+      }).then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+        .then(function () {
+          form.classList.remove('is-sending');
+          form.classList.add('is-done');
+          if (status) { status.textContent = ''; }
+          var done = form.querySelector('.form__done h3');
+          if (done) done.setAttribute('tabindex', '-1'), done.focus({ preventScroll: true });
+        })
+        .catch(function () {
+          /* Fall back to a normal POST so nothing is lost. */
+          form.classList.remove('is-sending');
+          if (status) { status.className = 'form__status is-error'; status.textContent = 'One moment, sending another way…'; }
+          form.removeEventListener('submit', onSubmit);
+          HTMLFormElement.prototype.submit.call(form);
+        });
+    }
+    form.addEventListener('submit', onSubmit);
+  }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
